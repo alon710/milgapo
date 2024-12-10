@@ -1,6 +1,5 @@
 from sqlmodel import Session
 from app.db.data_access.scholarships import ScholarshipsDataAccess
-from uuid import UUID
 
 
 class ScholarshipsService:
