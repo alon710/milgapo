@@ -1,0 +1,25 @@
+[project]
+name = "milgapo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.6",
+    "pydantic-settings>=2.6.1",
+    "pydantic>=2.10.3",
+    "sqlmodel>=0.0.22",
+    "logfire>=2.6.2",
+    "uvicorn>=0.32.1",
+    "opentelemetry-instrumentation>=0.49b2",
+    "opentelemetry-instrumentation-asgi>=0.49b2",
+    "opentelemetry-instrumentation-fastapi>=0.49b2",
+    "structlog>=24.4.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.13.0",
+    "pre-commit>=4.0.1",
+    "ruff>=0.8.2",
+]
