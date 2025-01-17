@@ -5,13 +5,12 @@ from contextlib import asynccontextmanager
 from app.core.logger import init_logger
 from app.api import router as api_router
 from app.core.settings import Settings
-from app.schemas.common import Environment
 
 logfire.configure()
 init_logger()
 
 settings = Settings()
-app = FastAPI(debug=settings.core.environment != Environment.PRODUCTION)
+app = FastAPI(debug=True)
 
 logfire.instrument_fastapi(app)
 

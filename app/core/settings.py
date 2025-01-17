@@ -1,7 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
-from app.schemas.common import Environment
 
 from pathlib import Path
 
@@ -17,11 +16,6 @@ class DatabaseSettings(BaseSettings):
     )
 
 
-class CoreSettings(BaseSettings):
-    environment: Environment = Field(alias="ENVIRONMENT", default=Environment.LOCAL)
-
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ENV_FILE)
-    core: CoreSettings = CoreSettings()
     database: DatabaseSettings = DatabaseSettings()
