@@ -2,8 +2,8 @@ from sqlmodel import Field, Relationship, SQLModel
 from uuid import uuid4
 
 
-class ScholarshipsGroupsScholarshipsLink(SQLModel, table=True):
-    __tablename__ = "scholarships_groups_scholarships_link"
+class ScholarshipsGroupsScholarshipsLinks(SQLModel, table=True):
+    __tablename__ = "scholarships_groups_scholarships_links"
     scholarship_id: str = Field(foreign_key="scholarships.id", primary_key=True)
     group_id: str = Field(foreign_key="scholarships_groups.id", primary_key=True)
 
@@ -16,7 +16,7 @@ class ScholarshipsGroups(SQLModel, table=True):
 
     scholarships: list["Scholarships"] = Relationship(
         back_populates="groups",
-        link_model=ScholarshipsGroupsScholarshipsLink,
+        link_model=ScholarshipsGroupsScholarshipsLinks,
     )
 
 
@@ -28,5 +28,5 @@ class Scholarships(SQLModel, table=True):
 
     groups: list["ScholarshipsGroups"] = Relationship(
         back_populates="scholarships",
-        link_model=ScholarshipsGroupsScholarshipsLink,
+        link_model=ScholarshipsGroupsScholarshipsLinks,
     )

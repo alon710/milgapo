@@ -6,11 +6,12 @@ from app.schemas.scholarships import (
     ScholarshipCreate,
     ScholarshipGroup,
     ScholarshipGroupCreate,
+    ScholarshipsGroupsScholarshipsLink,
 )
 from app.models.scholarships import (
     Scholarships,
     ScholarshipsGroups,
-    ScholarshipsGroupsScholarshipsLink,
+    ScholarshipsGroupsScholarshipsLinks,
 )
 
 
@@ -31,11 +32,12 @@ class ScholarshipsDataAccess:
             session.add(scholarship)
             session.commit()
             session.refresh(scholarship)
-            return scholarship
+            return Scholarship(**scholarship.model_dump())
 
     def get_scholarship_group_by_id(self, group_id: str) -> ScholarshipGroup:
         with self.session as session:
-            return session.get(ScholarshipsGroups, group_id)
+            scholarship_group = session.get(ScholarshipsGroups, group_id)
+            return ScholarshipGroup(**scholarship_group.model_dump())
 
     def create_scholarship_group(
         self,
@@ -46,7 +48,7 @@ class ScholarshipsDataAccess:
             session.add(group)
             session.commit()
             session.refresh(group)
-            return group
+            return ScholarshipGroup(**group.model_dump())
 
     def add_scholarship_to_group(
         self,
@@ -54,10 +56,15 @@ class ScholarshipsDataAccess:
         group_id: str,
     ) -> ScholarshipsGroupsScholarshipsLink:
         with self.session as session:
-            new_record = ScholarshipsGroupsScholarshipsLink(
+            if not session.get(Scholarships, scholarship_id):
+                raise ValueError(f"Scholarship '{scholarship_id}' does not exist")
+            if not session.get(ScholarshipsGroups, group_id):
+                raise ValueError(f"Group '{group_id}' does not exist")
+
+            link = ScholarshipsGroupsScholarshipsLinks(
                 scholarship_id=scholarship_id,
                 group_id=group_id,
             )
-            session.merge(new_record)  # Will insert or update as needed
+            session.merge(link)
             session.commit()
-            return new_record
+            return ScholarshipsGroupsScholarshipsLink(**link.model_dump())

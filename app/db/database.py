@@ -15,7 +15,7 @@ def create_db_and_tables() -> None:
     from app.models.scholarships import (
         Scholarships,
         ScholarshipsGroups,
-        ScholarshipsGroupsScholarshipsLink,
+        ScholarshipsGroupsScholarshipsLinks,
     )  # noqa
 
     SQLModel.metadata.create_all(engine)

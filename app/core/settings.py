@@ -3,12 +3,18 @@ from pydantic import Field
 
 from app.schemas.common import Environment
 
+from pathlib import Path
+
+ENV_FILE = Path(__file__).parent.parent / ".env"
+
 
 class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="DATABASE_")
-    connection_string: str = Field(alias="DATABASE_URL")
+    connection_string: str = Field(alias="DATABASE_URL", default="sqlite://")
     debug: bool = Field(alias="DATABASE_DEBUG")
-    connection_args: dict = Field(alias="DATABASE_CONNECTION_ARGS")
+    connection_args: dict = Field(
+        alias="DATABASE_CONNECTION_ARGS", default={"check_same_thread": False}
+    )
 
 
 class CoreSettings(BaseSettings):
@@ -16,6 +22,6 @@ class CoreSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=ENV_FILE)
     core: CoreSettings = CoreSettings()
     database: DatabaseSettings = DatabaseSettings()

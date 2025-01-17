@@ -18,7 +18,8 @@ def get_scholarship(id: str, db=Depends(get_session)) -> Scholarship:
 
 @router.post("/")
 def create_scholarship(
-    scholarship: ScholarshipCreate, db=Depends(get_session)
+    scholarship: ScholarshipCreate,
+    db=Depends(get_session),
 ) -> Scholarship:
     return ScholarshipsService(db).create_scholarship(scholarship)
 
