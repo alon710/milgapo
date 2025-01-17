@@ -5,6 +5,7 @@ from app.schemas.scholarships import (
     ScholarshipCreate,
     ScholarshipFilter,
     ScholarshipGroup,
+    ScholarshipGroupCreate,
     ScholarshipsGroupsScholarshipsLink,
 )
 from app.services.scholarships import ScholarshipsService
@@ -35,7 +36,7 @@ def get_scholarship_group(
 
 @router.post("/groups/")
 def create_scholarship_group(
-    group: ScholarshipGroup,
+    group: ScholarshipGroupCreate,
     db=Depends(get_session),
 ) -> ScholarshipGroup:
     return ScholarshipsService(db).create_scholarship_group(group)
