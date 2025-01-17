@@ -1,9 +1,9 @@
-from sqlmodel import Session, insert, update
-from sqlalchemy.sql.expression import Insert
+from sqlmodel import Session, select
 
 from app.schemas.scholarships import (
     Scholarship,
     ScholarshipCreate,
+    ScholarshipFilter,
     ScholarshipGroup,
     ScholarshipGroupCreate,
     ScholarshipsGroupsScholarshipsLink,
@@ -68,3 +68,19 @@ class ScholarshipsDataAccess:
             session.merge(link)
             session.commit()
             return ScholarshipsGroupsScholarshipsLink(**link.model_dump())
+
+    def get_scholarships(
+        self,
+        filters: ScholarshipFilter,
+        offset: int,
+        limit: int,
+    ) -> list[Scholarship]:
+        with self.session as session:
+            statement = select(Scholarships)
+            if filters.names:
+                statement = statement.filter(Scholarships.name.in_(filters.names))  # type: ignore
+
+            statement = statement.offset(offset).limit(limit)
+            results = session.exec(statement)
+
+            return results.all()

@@ -3,6 +3,7 @@ from app.db.data_access.scholarships import ScholarshipsDataAccess
 from app.schemas.scholarships import (
     ScholarshipCreate,
     Scholarship,
+    ScholarshipFilter,
     ScholarshipGroup,
     ScholarshipGroupCreate,
 )
@@ -50,4 +51,16 @@ class ScholarshipsService:
         return ScholarshipsDataAccess(self.session).add_scholarship_to_group(
             scholarship_id=scholarship_id,
             group_id=group_id,
+        )
+
+    def get_scholarships(
+        self,
+        filters: ScholarshipFilter,
+        offset: int,
+        limit: int,
+    ):
+        return ScholarshipsDataAccess(self.session).get_scholarships(
+            filters=filters,
+            offset=offset,
+            limit=limit,
         )

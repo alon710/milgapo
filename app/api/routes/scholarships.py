@@ -3,6 +3,7 @@ from app.db.database import get_session
 from app.schemas.scholarships import (
     Scholarship,
     ScholarshipCreate,
+    ScholarshipFilter,
     ScholarshipGroup,
     ScholarshipsGroupsScholarshipsLink,
 )
@@ -47,3 +48,17 @@ def add_scholarship_to_group(
     db=Depends(get_session),
 ) -> ScholarshipsGroupsScholarshipsLink:
     return ScholarshipsService(db).add_scholarship_to_group(scholarship_id, group_id)
+
+
+@router.post("/scholarships/get-bulk")
+def get_scholarships(
+    filters: ScholarshipFilter,
+    offset: int = 0,
+    limit: int = 10,
+    db=Depends(get_session),
+):
+    return ScholarshipsService(db).get_scholarships(
+        filters=filters,
+        offset=offset,
+        limit=limit,
+    )

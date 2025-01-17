@@ -16,7 +16,7 @@ logfire.instrument_fastapi(app)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     from app.db.database import create_db_and_tables
 
     create_db_and_tables()

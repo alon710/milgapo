@@ -12,12 +12,6 @@ engine = create_engine(
 
 
 def create_db_and_tables() -> None:
-    from app.models.scholarships import (
-        Scholarships,
-        ScholarshipsGroups,
-        ScholarshipsGroupsScholarshipsLinks,
-    )  # noqa
-
     SQLModel.metadata.create_all(engine)
 
 

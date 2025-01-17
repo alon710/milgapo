@@ -171,3 +171,4 @@ cython_debug/
 .logfire
 .DS_Store
 __init__.cpython-38.pyc
+db.sqlite3
