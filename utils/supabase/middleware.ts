@@ -2,10 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const updateSession = async (request: NextRequest) => {
-  
-  
   try {
-    
     let response = NextResponse.next({
       request: {
         headers: request.headers,
@@ -35,11 +32,8 @@ export const updateSession = async (request: NextRequest) => {
       },
     );
 
-    
-    
     const user = await supabase.auth.getUser();
 
-    
     if (request.nextUrl.pathname.startsWith("/dashboard") && user.error) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
@@ -50,6 +44,7 @@ export const updateSession = async (request: NextRequest) => {
 
     return response;
   } catch (e) {
+    console.error(e);
     return NextResponse.next({
       request: {
         headers: request.headers,

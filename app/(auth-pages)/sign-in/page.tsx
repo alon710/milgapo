@@ -7,19 +7,17 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-
 export default async function Login(props: { searchParams: Promise<Message> }) {
-    const supabase = await createClient();
-  
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    if (user) {
-      return redirect("/dashboard");
-    }
-  
-  
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/dashboard");
+  }
+
   const searchParams = await props.searchParams;
   return (
     <form className="flex-1 flex flex-col min-w-64">

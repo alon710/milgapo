@@ -8,19 +8,18 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-
 export default async function Home() {
-    const supabase = await createClient();
-  
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    if (user) {
-      return redirect("/dashboard");
-    } else {
-      return redirect("/sign-in");
-    }
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/dashboard");
+  } else {
+    return redirect("/sign-in");
+  }
 
   return (
     <>

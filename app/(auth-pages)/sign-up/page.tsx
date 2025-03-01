@@ -10,16 +10,16 @@ import { redirect } from "next/navigation";
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
-    const supabase = await createClient();
-  
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    if (user) {
-      return redirect("/dashboard");
-    }
-  
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/dashboard");
+  }
+
   const searchParams = await props.searchParams;
   if ("message" in searchParams) {
     return (

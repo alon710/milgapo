@@ -124,7 +124,7 @@ export const resetPasswordAction = async (formData: FormData) => {
         "Password must be different from previous password",
       );
     }
-  
+
     encodedRedirect(
       "error",
       "/dashboard/reset-password",
