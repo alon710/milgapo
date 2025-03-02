@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { CredentialFields } from "@/components/auth/credential-fields";
-import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { FormMessage, Message } from "@/components/form-message";
 
 export default async function Signup(props: {
