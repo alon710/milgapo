@@ -2,10 +2,12 @@ import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { JSX } from "react";
 
+type FormAction = (formData: FormData) => Promise<void>;
+
 type AuthFormLayoutProps = {
   title: string;
   description: JSX.Element;
-  submitAction: (...args: any[]) => Promise<any>;
+  submitAction: FormAction;
   buttonText: string;
   pendingText: string;
   children: React.ReactNode;
