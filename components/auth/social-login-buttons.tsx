@@ -22,7 +22,18 @@ export function SocialLoginButtons() {
   }
 
   async function handleFacebookSignIn() {
-    console.log("Facebook sign in");
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      console.error("Facebook sign in error:", error.message);
+      return;
+    }
+    console.log("Facebook sign in initiated");
   }
 
   return (
