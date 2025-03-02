@@ -1,6 +1,7 @@
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { JSX } from "react";
+import { SocialLoginButtons } from "./social-login-buttons";
 
 type FormAction = (formData: FormData) => Promise<void>;
 
@@ -35,6 +36,7 @@ export function AuthFormLayout({
           {buttonText}
         </SubmitButton>
         <FormMessage message={message} />
+        <SocialLoginButtons />
       </div>
     </form>
   );

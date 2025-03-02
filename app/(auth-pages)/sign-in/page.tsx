@@ -41,7 +41,6 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
       >
         <CredentialFields includeForgotPassword={true} />
       </AuthFormLayout>
-      <SocialLoginButtons />
     </div>
   );
 }

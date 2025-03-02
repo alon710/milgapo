@@ -11,6 +11,7 @@ export function SocialLoginButtons() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
+        redirectTo: window.location.origin + "/auth/callback",
         queryParams: {
           access_type: "offline",
           prompt: "consent",
@@ -21,21 +22,10 @@ export function SocialLoginButtons() {
       console.error("Google sign in error:", error.message);
       return;
     }
-
-    console.log("Google sign in");
+    console.log("Google sign in initiated");
   }
 
   async function handleFacebookSignIn() {
-    const supabase = await createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "facebook",
-    });
-
-    if (error) {
-      console.error("Facebook sign in error:", error.message);
-      return;
-    }
-
     console.log("Facebook sign in");
   }
 

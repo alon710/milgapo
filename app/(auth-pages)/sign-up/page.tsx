@@ -7,7 +7,9 @@ import { CredentialFields } from "@/components/auth/credential-fields";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { FormMessage, Message } from "@/components/form-message";
 
-export default async function Signup(props: { searchParams: Promise<Message> }) {
+export default async function Signup(props: {
+  searchParams: Promise<Message>;
+}) {
   const supabase = await createClient();
 
   const {
@@ -49,7 +51,6 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
       >
         <CredentialFields includeForgotPassword={false} minPasswordLength={6} />
       </AuthFormLayout>
-      <SocialLoginButtons />
     </div>
   );
 }
