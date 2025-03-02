@@ -1,15 +1,13 @@
 import { signUpAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { AuthFormLayout } from "@/components/auth/auth-form-layout";
+import { CredentialFields } from "@/components/auth/credential-fields";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
+import { FormMessage, Message } from "@/components/form-message";
 
-export default async function Signup(props: {
-  searchParams: Promise<Message>;
-}) {
+export default async function Signup(props: { searchParams: Promise<Message> }) {
   const supabase = await createClient();
 
   const {
@@ -29,33 +27,29 @@ export default async function Signup(props: {
     );
   }
 
-  return (
+  const description = (
     <>
-      <form className="flex flex-col min-w-64 max-w-64 mx-auto">
-        <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
-          Already have an account?{" "}
-          <Link className="text-primary font-medium underline" href="/sign-in">
-            Sign in
-          </Link>
-        </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            minLength={6}
-            required
-          />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
-            Sign up
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
+      Already have an account?{" "}
+      <Link className="text-primary font-medium underline" href="/sign-in">
+        Sign in
+      </Link>
     </>
+  );
+
+  return (
+    <div className="flex flex-col gap-8 max-w-md mx-auto">
+      <AuthFormLayout
+        title="Sign up"
+        description={description}
+        submitAction={signUpAction}
+        buttonText="Sign up"
+        pendingText="Signing up..."
+        message={searchParams}
+        containerClassName="flex flex-col min-w-64 mx-auto"
+      >
+        <CredentialFields includeForgotPassword={false} minPasswordLength={6} />
+      </AuthFormLayout>
+      <SocialLoginButtons />
+    </div>
   );
 }
