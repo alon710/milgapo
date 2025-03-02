@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { CredentialFields } from "@/components/auth/credential-fields";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { FormMessage, Message } from "@/components/form-message";
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {
@@ -36,16 +37,19 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
   );
 
   return (
-    <AuthFormLayout
-      containerClassName="flex flex-col min-w-64 max-w-64 mx-auto"
-      title="Sign up"
-      description={description}
-      submitAction={signUpAction}
-      buttonText="Sign up"
-      pendingText="Signing up..."
-      message={searchParams}
-    >
-      <CredentialFields includeForgotPassword={false} minPasswordLength={6} />
-    </AuthFormLayout>
+    <div className="flex flex-col gap-8 max-w-md mx-auto">
+      <AuthFormLayout
+        title="Sign up"
+        description={description}
+        submitAction={signUpAction}
+        buttonText="Sign up"
+        pendingText="Signing up..."
+        message={searchParams}
+        containerClassName="flex flex-col min-w-64 mx-auto"
+      >
+        <CredentialFields includeForgotPassword={false} minPasswordLength={6} />
+      </AuthFormLayout>
+      <SocialLoginButtons />
+    </div>
   );
 }

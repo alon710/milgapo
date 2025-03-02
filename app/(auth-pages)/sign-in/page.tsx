@@ -4,9 +4,10 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { CredentialFields } from "@/components/auth/credential-fields";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { Message } from "@/components/form-message";
 
-export default async function Login(props: { searchParams: Message | Promise<Message> }) {
+export default async function Login(props: { searchParams: Promise<Message> }) {
   const supabase = await createClient();
 
   const {
@@ -17,6 +18,7 @@ export default async function Login(props: { searchParams: Message | Promise<Mes
     return redirect("/dashboard");
   }
 
+  // Ensure the promise is resolved
   const searchParams = await props.searchParams;
   const description = (
     <>
@@ -28,15 +30,18 @@ export default async function Login(props: { searchParams: Message | Promise<Mes
   );
 
   return (
-    <AuthFormLayout
-      title="Sign in"
-      description={description}
-      submitAction={signInAction}
-      buttonText="Sign in"
-      pendingText="Signing In..."
-      message={searchParams}  // This is now a Message, not a Promise
-    >
-      <CredentialFields includeForgotPassword={true} />
-    </AuthFormLayout>
+    <div className="flex flex-col gap-8">
+      <AuthFormLayout
+        title="Sign in"
+        description={description}
+        submitAction={signInAction}
+        buttonText="Sign in"
+        pendingText="Signing In..."
+        message={searchParams}
+      >
+        <CredentialFields includeForgotPassword={true} />
+      </AuthFormLayout>
+      <SocialLoginButtons />
+    </div>
   );
 }
