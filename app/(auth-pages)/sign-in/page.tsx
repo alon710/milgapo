@@ -6,7 +6,7 @@ import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { CredentialFields } from "@/components/auth/credential-fields";
 import { Message } from "@/components/form-message";
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
+export default async function Login(props: { searchParams: Message | Promise<Message> }) {
   const supabase = await createClient();
 
   const {
