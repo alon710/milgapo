@@ -26,7 +26,16 @@ export function SocialLoginButtons() {
   }
 
   async function handleFacebookSignIn() {
-    // TODO: Replace with your actual Facebook login action.
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "facebook",
+    });
+
+    if (error) {
+      console.error("Facebook sign in error:", error.message);
+      return;
+    }
+
     console.log("Facebook sign in");
   }
 
