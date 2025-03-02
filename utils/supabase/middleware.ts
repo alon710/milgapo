@@ -19,20 +19,24 @@ export const updateSession = async (request: NextRequest) => {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value),
+              request.cookies.set(name, value)
             );
             response = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options),
+              response.cookies.set(name, value, options)
             );
           },
         },
-      },
+      }
     );
 
     const user = await supabase.auth.getUser();
+
+    if (user && user?.error) {
+      console.error("User error", user.error);
+    }
 
     if (request.nextUrl.pathname.startsWith("/dashboard") && user.error) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
