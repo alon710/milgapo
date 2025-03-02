@@ -6,8 +6,6 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
-
-// eslint-disable-next-line 
 import { SpeedInsights } from "@vercel/speed-insights/next" 
 
 const defaultUrl = process.env.VERCEL_URL
@@ -52,6 +50,7 @@ export default function RootLayout({
               </nav>
               <div className="flex flex-col gap-20 max-w-5xl p-5">
                 {children}
+                <SpeedInsights />
               </div>
 
               <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
