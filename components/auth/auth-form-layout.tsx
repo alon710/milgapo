@@ -28,7 +28,7 @@ export function AuthFormLayout({
   return (
     <form className={containerClassName}>
       <h1 className="text-2xl font-medium">{title}</h1>
-      <p className="text-sm text-foreground">{description}</p>
+      <div className="text-sm text-foreground">{description}</div>
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
         {children}
         <SubmitButton formAction={submitAction} pendingText={pendingText}>
