@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { Message } from "@/components/form-message";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 type LoginFormProps = {
   description: JSX.Element;
@@ -34,26 +35,31 @@ export default function LoginForm({
       pendingText="Sending OTP..."
       message={searchParams}
     >
-      <div className="flex gap-4 mb-4">
-        <button
-          type="button"
-          onClick={() => setContactMethod("email")}
-          className={`px-4 py-2 border rounded ${
+      <ToggleGroup
+        type="single"
+        value={contactMethod}
+        onValueChange={(value) =>
+          value && setContactMethod(value as "email" | "phone")
+        }
+        className="flex mb-4 w-full"
+      >
+        <ToggleGroupItem
+          value="email"
+          className={`flex-1 px-4 py-1 border rounded-l ${
             contactMethod === "email" ? "bg-gray-300" : "bg-transparent"
           }`}
         >
           Email
-        </button>
-        <button
-          type="button"
-          onClick={() => setContactMethod("phone")}
-          className={`px-4 py-2 border rounded ${
+        </ToggleGroupItem>
+        <ToggleGroupItem
+          value="phone"
+          className={`flex-1 px-4 py-1 border rounded-r ${
             contactMethod === "phone" ? "bg-gray-300" : "bg-transparent"
           }`}
         >
           Phone
-        </button>
-      </div>
+        </ToggleGroupItem>
+      </ToggleGroup>
       <Label htmlFor="contact">
         {contactMethod === "email" ? "Email" : "Phone"}
       </Label>
