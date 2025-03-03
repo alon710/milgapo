@@ -5,35 +5,55 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { createClient } from "@/utils/supabase/client";
 
-export function SocialLoginButtons() {
-  async function handleGoogleSignIn() {
-    const supabase = await createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      console.error("Google sign in error:", error.message);
-      return;
-    }
-    console.log("Google sign in initiated");
-  }
+interface SocialLoginButtonProps {
+  provider: "google" | "facebook";
+  onClick: () => void;
+}
 
-  async function handleFacebookSignIn() {
+export function SocialLoginButton({
+  provider,
+  onClick,
+}: SocialLoginButtonProps) {
+  const { icon, text, className } = (() => {
+    if (provider === "google") {
+      return {
+        icon: <FcGoogle className="mr-2" />,
+        text: "Google",
+        className:
+          "bg-white text-black border border-gray-300 hover:bg-gray-100",
+      };
+    } else if (provider === "facebook") {
+      return {
+        icon: <FaFacebookF className="mr-2" />,
+        text: "Facebook",
+        className: "bg-[#1877F2] text-white hover:bg-blue-600",
+      };
+    }
+    return { icon: null, text: "", className: "" };
+  })();
+
+  return (
+    <Button type="button" onClick={onClick} className={className}>
+      {icon}
+      {text}
+    </Button>
+  );
+}
+
+export function SocialLoginButtons() {
+  async function handleSocialSignIn(provider: "google" | "facebook") {
     const supabase = await createClient();
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "facebook",
+      provider,
       options: {
         redirectTo: `${location.origin}/auth/callback`,
       },
     });
     if (error) {
-      console.error("Facebook sign in error:", error.message);
+      console.error(`${provider} sign in error:`, error.message);
       return;
     }
-    console.log("Facebook sign in initiated");
+    console.log(`${provider} sign in initiated`);
   }
 
   return (
@@ -46,14 +66,14 @@ export function SocialLoginButtons() {
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
       </div>
       <div className="mt-2 grid grid-cols-2 gap-3">
-        <Button type="button" onClick={handleGoogleSignIn}>
-          <FcGoogle className="mr-2" />
-          Google
-        </Button>
-        <Button type="button" onClick={handleFacebookSignIn}>
-          <FaFacebookF className="mr-2" />
-          Facebook
-        </Button>
+        <SocialLoginButton
+          provider="google"
+          onClick={() => handleSocialSignIn("google")}
+        />
+        <SocialLoginButton
+          provider="facebook"
+          onClick={() => handleSocialSignIn("facebook")}
+        />
       </div>
     </div>
   );
