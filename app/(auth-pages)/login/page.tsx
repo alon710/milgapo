@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { Message } from "@/components/form-message";
 import LoginForm from "@/components/auth/login-form";
 

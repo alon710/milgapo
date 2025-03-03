@@ -1,7 +1,6 @@
 "use client";
 
 import { JSX, useState } from "react";
-import { useRouter } from "next/navigation";
 import { signInAction } from "@/app/actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,9 +20,8 @@ export default function LoginForm({
     "email"
   );
   const [contact, setContact] = useState("");
-  const router = useRouter();
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit() {
     await signInAction({ contact, method: contactMethod });
   }
 
