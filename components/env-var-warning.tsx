@@ -12,20 +12,11 @@ export function EnvVarWarning() {
         <Button
           asChild
           size="sm"
-          variant={"outline"}
-          disabled
-          className="opacity-75 cursor-none pointer-events-none"
-        >
-          <Link href="/login">Sign in</Link>
-        </Button>
-        <Button
-          asChild
-          size="sm"
           variant={"default"}
           disabled
           className="opacity-75 cursor-none pointer-events-none"
         >
-          <Link href="/login">Sign up</Link>
+          <Link href="/login">Sign in</Link>
         </Button>
       </div>
     </div>
