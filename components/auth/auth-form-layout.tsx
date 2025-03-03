@@ -1,8 +1,7 @@
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { JSX } from "react";
-import { SocialLoginButtons } from "./social-login-buttons";
-
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 type FormAction = (formData: FormData) => Promise<void>;
 
 type AuthFormLayoutProps = {
