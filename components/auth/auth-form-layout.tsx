@@ -1,8 +1,7 @@
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { JSX } from "react";
-import { SocialLoginButtons } from "./social-login-buttons";
-
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 type FormAction = (formData: FormData) => Promise<void>;
 
 type AuthFormLayoutProps = {
@@ -29,7 +28,7 @@ export function AuthFormLayout({
   return (
     <form className={containerClassName}>
       <h1 className="text-2xl font-medium">{title}</h1>
-      <p className="text-sm text-foreground">{description}</p>
+      <div className="text-sm text-foreground">{description}</div>
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
         {children}
         <SubmitButton formAction={submitAction} pendingText={pendingText}>
