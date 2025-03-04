@@ -1,9 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { Message } from "@/components/form-message";
 import LoginForm from "@/components/auth/login-form";
 import { authConfig } from "@/config/auth";
-export default async function Login(props: { searchParams: Promise<Message> }) {
+
+export default async function Login(props: { searchParams: Promise<{ message: string }> }) {
     const supabase = await createClient();
 
     const {
@@ -19,7 +19,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
 
     return (
         <div className="flex flex-col gap-8">
-            <LoginForm description={description} searchParams={searchParams} />
+            <LoginForm description={description} error={searchParams.message} />
         </div>
     );
 }

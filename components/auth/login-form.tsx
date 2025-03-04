@@ -1,22 +1,29 @@
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { signInAction } from "@/app/actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthFormLayout } from "@/components/auth/auth-form-layout";
-import { Message } from "@/components/form-message";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { authConfig } from "@/config/auth";
+import { toast } from "sonner";
 
 type LoginFormProps = {
     description: JSX.Element;
-    searchParams: Message;
+    error: string | undefined;
 };
 
-export default function LoginForm({ description, searchParams }: LoginFormProps) {
+export default function LoginForm({ description, error }: LoginFormProps) {
     const [contactMethod, setContactMethod] = useState<"email" | "phone">("email");
     const [contact, setContact] = useState("");
+
+    useEffect(() => {
+        console.log("error", error);
+        if (error) {
+            toast.error(error, { id: "login-error" }); // Same ID prevents duplicates
+        }
+    }, [error]);
 
     async function handleSubmit() {
         await signInAction({ contact, method: contactMethod });
@@ -29,7 +36,6 @@ export default function LoginForm({ description, searchParams }: LoginFormProps)
             submitAction={handleSubmit}
             buttonText={authConfig.LoginButtonText}
             pendingText={authConfig.LoginButtonPendingText}
-            message={searchParams}
         >
             <ToggleGroup
                 type="single"
@@ -38,20 +44,20 @@ export default function LoginForm({ description, searchParams }: LoginFormProps)
                 className="flex mb-4 w-full"
             >
                 <ToggleGroupItem
-                    value="email"
-                    className={`flex-1 px-4 py-1 border rounded-l ${
-                        contactMethod === "email" ? "bg-gray-300" : "bg-transparent"
-                    }`}
-                >
-                    {authConfig.email}
-                </ToggleGroupItem>
-                <ToggleGroupItem
                     value="phone"
-                    className={`flex-1 px-4 py-1 border rounded-r ${
+                    className={`flex-1 px-4 py-1 border rounded-e ${
                         contactMethod === "phone" ? "bg-gray-300" : "bg-transparent"
                     }`}
                 >
                     {authConfig.phone}
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                    value="email"
+                    className={`flex-1 px-4 py-1 border rounded-s ${
+                        contactMethod === "email" ? "bg-gray-300" : "bg-transparent"
+                    }`}
+                >
+                    {authConfig.email}
                 </ToggleGroupItem>
             </ToggleGroup>
             <Label htmlFor="contact">{contactMethod === "email" ? authConfig.email : authConfig.phone}</Label>

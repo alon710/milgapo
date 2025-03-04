@@ -6,6 +6,7 @@ import { SiteLogo } from "@/components/layout/site-logo";
 import { SiteFooter } from "@/components/layout/footer";
 import { commonConfig } from "@/config/common";
 import { Analytics } from "@vercel/analytics/react";
+import { Toaster } from "@/components/ui/sonner";
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
@@ -41,6 +42,17 @@ export default function RootLayout({
                             <SpeedInsights />
                             <Analytics />
                         </div>
+                        <Toaster
+                            position="top-right"
+                            toastOptions={{
+                                classNames: {
+                                    toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+                                    description: "group-[.toast]:text-muted-foreground",
+                                    actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+                                    cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground"
+                                }
+                            }}
+                        />
                         <SiteFooter />
                     </div>
                 </main>

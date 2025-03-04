@@ -1,7 +1,7 @@
-import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { JSX } from "react";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
+
 type FormAction = (formData: FormData) => Promise<void>;
 
 type AuthFormLayoutProps = {
@@ -11,7 +11,6 @@ type AuthFormLayoutProps = {
     buttonText: string;
     pendingText: string;
     children: React.ReactNode;
-    message: Message;
     containerClassName?: string;
 };
 
@@ -22,7 +21,6 @@ export function AuthFormLayout({
     buttonText,
     pendingText,
     children,
-    message,
     containerClassName = "flex flex-col min-w-64"
 }: AuthFormLayoutProps) {
     return (
@@ -34,7 +32,6 @@ export function AuthFormLayout({
                 <SubmitButton formAction={submitAction} pendingText={pendingText}>
                     {buttonText}
                 </SubmitButton>
-                <FormMessage message={message} />
                 <SocialLoginButtons />
             </div>
         </form>

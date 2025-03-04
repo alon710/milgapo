@@ -1,6 +1,5 @@
 "use server";
 
-import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -19,7 +18,7 @@ export const signInAction = async ({ contact, method }: SignInData) => {
     }
 
     if (error) {
-        return encodedRedirect("error", "/login", error.message);
+        return redirect(`/login?message=${encodeURIComponent(error.message)}`);
     }
 
     return redirect(`/otp-verification?contact=${encodeURIComponent(contact)}&method=${method}`);
