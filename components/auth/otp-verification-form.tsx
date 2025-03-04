@@ -38,11 +38,11 @@ export default function OTPVerificationForm() {
     }
 
     if (result.error) {
+      setLoading(false);
       if (result.error.message === "Token has expired or is invalid") {
         setError(OtpVerificationFormConfig.tokenExpiredError);
       } else {
         setError(result.error.message);
-        setLoading(false);
       }
     } else {
       router.push("/dashboard");
