@@ -1,10 +1,11 @@
-import { SiteLogo } from "@/components/layout/site-logo";
 import "../globals.css";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist } from "next/font/google";
+
 import HeaderAuth from "@/components/header-auth";
+import { SiteLogo } from "@/components/layout/site-logo";
 
 const geistSans = Geist({
     display: "swap",
