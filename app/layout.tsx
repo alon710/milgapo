@@ -4,7 +4,8 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { SiteFooter } from "@/components/layout/footer";
-import { siteConfig, SiteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site";
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
