@@ -1,21 +1,21 @@
 import { GraduationCapIcon } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react/jsx-runtime";
-import { siteConfig } from "@/config/site";
+import { commonConfig } from "@/config/common";
 
 type SiteLogoProps = {
-  href: string;
+    href: string;
 };
 
 export const SiteLogo = (props: SiteLogoProps): JSX.Element => {
-  return (
-    <>
-      <div className="col-span-full xl:col-span-2">
-        <Link href={props.href} className="flex font-bold items-center">
-          <GraduationCapIcon className="w-9 h-9 mx-2" />
-          <h3 className="text-2xl">{siteConfig.title}</h3>
-        </Link>
-      </div>
-    </>
-  );
+    return (
+        <>
+            <div className="col-span-full xl:col-span-2">
+                <Link href={props.href} className="flex font-bold items-center">
+                    <GraduationCapIcon className="w-9 h-9 mx-2" />
+                    <h3 className="text-2xl">{commonConfig.titleEnglish}</h3>
+                </Link>
+            </div>
+        </>
+    );
 };

@@ -5,31 +5,29 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 type SignInData = {
-  contact: string;
-  method: "email" | "phone";
+    contact: string;
+    method: "email" | "phone";
 };
 
 export const signInAction = async ({ contact, method }: SignInData) => {
-  const supabase = await createClient();
+    const supabase = await createClient();
 
-  let error;
-  if (method === "email") {
-    ({ error } = await supabase.auth.signInWithOtp({ email: contact }));
-  } else {
-    ({ error } = await supabase.auth.signInWithOtp({ phone: contact }));
-  }
+    let error;
+    if (method === "email") {
+        ({ error } = await supabase.auth.signInWithOtp({ email: contact }));
+    } else {
+        ({ error } = await supabase.auth.signInWithOtp({ phone: contact }));
+    }
 
-  if (error) {
-    return encodedRedirect("error", "/login", error.message);
-  }
+    if (error) {
+        return encodedRedirect("error", "/login", error.message);
+    }
 
-  return redirect(
-    `/otp-verification?contact=${encodeURIComponent(contact)}&method=${method}`
-  );
+    return redirect(`/otp-verification?contact=${encodeURIComponent(contact)}&method=${method}`);
 };
 
 export const signOutAction = async () => {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  return redirect("/");
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    return redirect("/");
 };
