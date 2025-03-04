@@ -68,7 +68,7 @@ export default function LoginForm({
         name="contact"
         type={contactMethod === "email" ? "email" : "tel"}
         placeholder={
-          contactMethod === "email" ? "you@example.com" : "1234567890"
+          contactMethod === "email" ? "email@example.com" : "0505625810"
         }
         value={contact}
         onChange={(e) => setContact(e.target.value)}
