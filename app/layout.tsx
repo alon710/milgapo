@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { SiteFooter } from "@/components/layout/footer";
 import { commonConfig } from "@/config/common";
+import { Analytics } from "@vercel/analytics/react";
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
@@ -38,6 +39,7 @@ export default function RootLayout({
                         <div className="flex flex-col gap-20 max-w-5xl p-5">
                             {children}
                             <SpeedInsights />
+                            <Analytics />
                         </div>
                         <SiteFooter />
                     </div>
