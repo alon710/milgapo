@@ -11,11 +11,10 @@ type SignInData = {
 
 export const signInAction = async ({ contact, method }: SignInData) => {
     const supabase = await createClient();
-
     let error;
     if (method === "email") {
         ({ error } = await supabase.auth.signInWithOtp({ email: contact }));
-    } else {
+    } else if (method === "phone") {
         ({ error } = await supabase.auth.signInWithOtp({ phone: contact }));
     }
 
