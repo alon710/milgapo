@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { createClient } from "@/utils/supabase/client";
+import { redirect } from "next/navigation";
 
 interface SocialLoginButtonProps {
   provider: "google" | "facebook";
@@ -43,17 +44,21 @@ export function SocialLoginButton({
 export function SocialLoginButtons() {
   async function handleSocialSignIn(provider: "google" | "facebook") {
     const supabase = await createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `${origin}/auth/callback`,
       },
     });
+
+    if (data.url) {
+      redirect(data.url);
+    }
+
     if (error) {
       console.error(`${provider} sign in error:`, error.message);
       return;
     }
-    console.log(`${provider} sign in initiated`);
   }
 
   return (
