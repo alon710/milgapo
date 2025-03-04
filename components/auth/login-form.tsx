@@ -1,13 +1,14 @@
 "use client";
 
 import { JSX, useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import { signInAction } from "@/app/actions";
+import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { authConfig } from "@/config/auth";
-import { toast } from "sonner";
 
 type LoginFormProps = {
     description: JSX.Element;

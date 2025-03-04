@@ -1,6 +1,7 @@
-import { SubmitButton } from "@/components/submit-button";
 import { JSX } from "react";
+
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
+import { SubmitButton } from "@/components/submit-button";
 
 type FormAction = (formData: FormData) => Promise<void>;
 

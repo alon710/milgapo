@@ -1,7 +1,8 @@
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+
 import LoginForm from "@/components/auth/login-form";
 import { authConfig } from "@/config/auth";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function Login(props: { searchParams: Promise<{ message: string }> }) {
     const supabase = await createClient();

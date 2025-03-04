@@ -1,6 +1,7 @@
 import { GraduationCapIcon } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react/jsx-runtime";
+
 import { commonConfig } from "@/config/common";
 
 type SiteLogoProps = {

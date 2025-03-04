@@ -1,11 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebookF } from "react-icons/fa";
-import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
+import { FaFacebookF } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+
+import { Button } from "@/components/ui/button";
 import { authConfig } from "@/config/auth";
+import { createClient } from "@/utils/supabase/client";
 interface SocialLoginButtonProps {
     provider: "google" | "facebook";
     onClick: () => void;

@@ -1,5 +1,5 @@
-import { commonConfig } from "@/config/common";
 import { SiteLogo } from "@/components/layout/site-logo"; // Add this import
+import { commonConfig } from "@/config/common";
 
 export function SiteFooter() {
     const currentYear = new Date().getFullYear();

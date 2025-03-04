@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/client";
 import { authConfig } from "@/config/auth";
+import { createClient } from "@/utils/supabase/client";
 
 export default function OTPVerificationForm() {
     const router = useRouter();

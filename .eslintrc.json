@@ -1,8 +1,15 @@
 {
     "extends": ["next/core-web-vitals", "eslint:recommended", "next/typescript", "prettier"],
-    "plugins": ["unused-imports"],
+    "plugins": ["unused-imports", "simple-import-sort"],
     "globals": {
         "JSX": "readonly"
     },
-    "rules": {}
+    "rules": {
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error"
+    },
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": "latest"
+    }
 }
