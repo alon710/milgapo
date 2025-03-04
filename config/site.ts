@@ -1,5 +1,6 @@
 export const siteConfig = {
-  title: "Milgapo",
+  titleEnglish: "Milgapo",
+  titleHebrew: "מלגפו",
 };
 
 export type SiteConfig = typeof siteConfig;

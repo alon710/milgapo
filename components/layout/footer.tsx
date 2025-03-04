@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import { FooterConfig } from "@/config/texts/footer";
 
 export function SiteFooter() {
   const currentYear = new Date().getFullYear();
@@ -7,7 +8,8 @@ export function SiteFooter() {
       <div className="container-wrapper">
         <div className="container py-4">
           <div className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
-            &copy; {currentYear} | {siteConfig.title} | All rights reserved.
+            {currentYear} | {siteConfig.titleHebrew} |{" "}
+            {FooterConfig.allRightsReserved} &copy;
           </div>
         </div>
       </div>

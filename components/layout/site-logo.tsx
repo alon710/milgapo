@@ -13,7 +13,7 @@ export const SiteLogo = (props: SiteLogoProps): JSX.Element => {
       <div className="col-span-full xl:col-span-2">
         <Link href={props.href} className="flex font-bold items-center">
           <GraduationCapIcon className="w-9 h-9 mx-2" />
-          <h3 className="text-2xl">{siteConfig.title}</h3>
+          <h3 className="text-2xl">{siteConfig.titleEnglish}</h3>
         </Link>
       </div>
     </>
