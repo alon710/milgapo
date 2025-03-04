@@ -43,20 +43,10 @@ export default function LoginForm({ description, error }: LoginFormProps) {
                 onValueChange={(value) => value && setContactMethod(value as "email" | "phone")}
                 className="flex mb-4 w-full"
             >
-                <ToggleGroupItem
-                    value="phone"
-                    className={`flex-1 px-4 py-1 border rounded-e ${
-                        contactMethod === "phone" ? "bg-gray-300" : "bg-transparent"
-                    }`}
-                >
+                <ToggleGroupItem value="phone" className="flex-1 px-4 py-1 border rounded-e">
                     {authConfig.phone}
                 </ToggleGroupItem>
-                <ToggleGroupItem
-                    value="email"
-                    className={`flex-1 px-4 py-1 border rounded-s ${
-                        contactMethod === "email" ? "bg-gray-300" : "bg-transparent"
-                    }`}
-                >
+                <ToggleGroupItem value="email" className="flex-1 px-4 py-1 border rounded-s">
                     {authConfig.email}
                 </ToggleGroupItem>
             </ToggleGroup>
