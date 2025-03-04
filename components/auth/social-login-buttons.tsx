@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
-
+import { authConfig } from "@/config/auth";
 interface SocialLoginButtonProps {
   provider: "google" | "facebook";
   onClick: () => void;
@@ -18,16 +18,16 @@ export function SocialLoginButton({
   const { icon, text, className } = (() => {
     if (provider === "google") {
       return {
-        icon: <FcGoogle className="mr-2" />,
-        text: "Google",
+        icon: <FcGoogle className="mx-1" />,
+        text: authConfig.google,
         className:
-          "bg-white text-black border border-gray-300 hover:bg-gray-100",
+          "bg-white text-black border border-gray-300 hover:bg-gray-100 font-sans",
       };
     } else if (provider === "facebook") {
       return {
-        icon: <FaFacebookF className="mr-2" />,
-        text: "Facebook",
-        className: "bg-[#1877F2] text-white hover:bg-blue-600",
+        icon: <FaFacebookF className="mx-1" />,
+        text: authConfig.facebook,
+        className: "bg-[#1877F2] text-white hover:bg-blue-600 font-sans",
       };
     }
     return { icon: null, text: "", className: "" };
@@ -66,7 +66,7 @@ export function SocialLoginButtons() {
       <div className="flex items-center">
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
         <span className="px-2 text-gray-500 dark:text-gray-400">
-          Or continue with
+          {authConfig.orContinueWith}
         </span>
         <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
       </div>

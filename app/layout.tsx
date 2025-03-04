@@ -4,7 +4,7 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { SiteFooter } from "@/components/layout/footer";
-import { siteConfig } from "@/config/site";
+import { commonConfig } from "@/config/common";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -12,8 +12,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: siteConfig.titleHebrew,
-  description: siteConfig.description,
+  title: commonConfig.titleHebrew,
+  description: commonConfig.description,
 };
 
 const geistSans = Geist({

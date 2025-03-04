@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
-import { OtpVerificationFormConfig } from "@/config/texts/otp-verification-form";
+import { authConfig } from "@/config/auth";
 
 export default function OTPVerificationForm() {
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function OTPVerificationForm() {
     if (result.error) {
       setLoading(false);
       if (result.error.message === "Token has expired or is invalid") {
-        setError(OtpVerificationFormConfig.tokenExpiredError);
+        setError(authConfig.OtpTokenExpiredError);
       } else {
         setError(result.error.message);
       }
@@ -54,27 +54,23 @@ export default function OTPVerificationForm() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 max-w-md w-full p-4"
     >
-      <h1 className="text-2xl font-medium">
-        {OtpVerificationFormConfig.title}
-      </h1>
+      <h1 className="text-2xl font-medium">{authConfig.otpTitle}</h1>
       <p>
-        {OtpVerificationFormConfig.subTitle} {contact}
+        {authConfig.otpSubTitle} {contact}
       </p>
       {error && <p className="text-red-500">{error}</p>}
-      <Label htmlFor="otp">{OtpVerificationFormConfig.otp}</Label>
+      <Label htmlFor="otp">{authConfig.otp}</Label>
       <Input
         id="otp"
         name="otp"
         type="text"
-        placeholder={OtpVerificationFormConfig.enterOtp}
+        placeholder={authConfig.enterOtp}
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
         required
       />
       <Button type="submit" disabled={loading}>
-        {loading
-          ? OtpVerificationFormConfig.verifyingButton
-          : OtpVerificationFormConfig.verifyButton}
+        {loading ? authConfig.OtpButtonPendingText : authConfig.OtpButtonText}
       </Button>
     </form>
   );
