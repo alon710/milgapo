@@ -20,7 +20,6 @@ const geistSans = Geist({
     display: "swap",
     subsets: ["latin"]
 });
-
 export default function RootLayout({
     children
 }: Readonly<{
@@ -29,33 +28,36 @@ export default function RootLayout({
     return (
         <html lang="he" dir="rtl" className={geistSans.className} suppressHydrationWarning>
             <body className="bg-background text-foreground">
-                <main className="min-h-screen flex flex-col items-center">
-                    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-                        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                            <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                                <SiteLogo href="/" />
-                                <HeaderAuth />
+                <div className="flex flex-col min-h-screen">
+                    <main className="flex-1 flex flex-col items-center">
+                        <div className="w-full flex flex-col gap-20 items-center pb-20">
+                            <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+                                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
+                                    <SiteLogo href="/" />
+                                    <HeaderAuth />
+                                </div>
+                            </nav>
+                            <div className="flex flex-col gap-20 max-w-5xl p-5">
+                                {children}
+                                <SpeedInsights />
+                                <Analytics />
                             </div>
-                        </nav>
-                        <div className="flex flex-col gap-20 max-w-5xl p-5">
-                            {children}
-                            <SpeedInsights />
-                            <Analytics />
+                            <Toaster
+                                position="top-right"
+                                toastOptions={{
+                                    classNames: {
+                                        toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+                                        description: "group-[.toast]:text-muted-foreground",
+                                        actionButton:
+                                            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+                                        cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground"
+                                    }
+                                }}
+                            />
                         </div>
-                        <Toaster
-                            position="top-right"
-                            toastOptions={{
-                                classNames: {
-                                    toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-                                    description: "group-[.toast]:text-muted-foreground",
-                                    actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-                                    cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground"
-                                }
-                            }}
-                        />
-                        <SiteFooter />
-                    </div>
-                </main>
+                    </main>
+                    <SiteFooter />
+                </div>
             </body>
         </html>
     );

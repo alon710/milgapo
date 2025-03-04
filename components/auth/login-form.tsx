@@ -19,9 +19,8 @@ export default function LoginForm({ description, error }: LoginFormProps) {
     const [contact, setContact] = useState("");
 
     useEffect(() => {
-        console.log("error", error);
         if (error) {
-            toast.error(error, { id: "login-error" }); // Same ID prevents duplicates
+            toast.error(error, { id: "login-error" });
         }
     }, [error]);
 
