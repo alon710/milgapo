@@ -30,14 +30,14 @@ export default function RootLayout({
             <body className="bg-background text-foreground">
                 <div className="flex flex-col min-h-screen">
                     <main className="flex-1 flex flex-col items-center">
-                        <div className="w-full flex flex-col gap-20 items-center pb-20">
+                        <div className="w-full flex flex-col items-center pb-20">
                             <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                                     <SiteLogo href="/" />
                                     <HeaderAuth />
                                 </div>
                             </nav>
-                            <div className="flex flex-col gap-20 max-w-5xl p-5">
+                            <div className="flex flex-col max-w-5xl p-5">
                                 {children}
                                 <SpeedInsights />
                                 <Analytics />
