@@ -15,6 +15,8 @@ export const authConfig = {
   OtpButtonText: "שלח",
   OtpButtonPendingText: "הקוד בבדיקה...",
   OtpTokenExpiredError: "הקוד שהוזן פג תוקף או שגוי",
+  greeting: "שלום",
+  logoutButtonText: "התנתק",
 };
 
 export type AuthConfig = typeof authConfig;
