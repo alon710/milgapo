@@ -48,7 +48,6 @@ export const updateSession = async (request: NextRequest) => {
 
     return response;
   } catch (e) {
-    console.error(e);
     return NextResponse.next({
       request: {
         headers: request.headers,

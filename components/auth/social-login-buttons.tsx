@@ -56,7 +56,6 @@ export function SocialLoginButtons() {
     }
 
     if (error) {
-      console.error(`${provider} sign in error:`, error.message);
       return;
     }
   }
