@@ -3,7 +3,19 @@
   "configurations": [
     {
       "command": "yarn dev",
-      "name": "yarn dev",
+      "name": "Debug",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "yarn build",
+      "name": "Build",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "yarn lint",
+      "name": "Lint",
       "request": "launch",
       "type": "node-terminal"
     }

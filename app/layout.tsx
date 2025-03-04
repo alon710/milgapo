@@ -28,7 +28,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={geistSans.className} suppressHydrationWarning>
+    <html
+      lang="he"
+      dir="rtl"
+      className={geistSans.className}
+      suppressHydrationWarning
+    >
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
           <div className="flex-1 w-full flex flex-col gap-20 items-center">
