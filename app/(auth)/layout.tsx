@@ -19,8 +19,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html className={geistSans.className} suppressHydrationWarning>
-            <DirectionProviderRTL>
+        <DirectionProviderRTL>
+            <html className={geistSans.className} suppressHydrationWarning>
                 <body className="bg-background text-foreground flex flex-col min-h-screen">
                     <div className="flex-grow flex flex-col justify-center items-center px-4 py-8">
                         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md space-y-4">
@@ -45,7 +45,7 @@ export default function RootLayout({
                         }}
                     />
                 </body>
-            </DirectionProviderRTL>
-        </html>
+            </html>
+        </DirectionProviderRTL>
     );
 }

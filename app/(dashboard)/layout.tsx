@@ -32,8 +32,8 @@ export default async function RootLayout({
     }
 
     return (
-        <html className={geistSans.className} suppressHydrationWarning>
-            <DirectionProviderRTL>
+        <DirectionProviderRTL>
+            <html className={geistSans.className} suppressHydrationWarning>
                 <body className="bg-background text-foreground">
                     <div className="w-full flex flex-col gap-20 items-center pb-20">
                         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
@@ -49,7 +49,7 @@ export default async function RootLayout({
                         </div>
                     </div>
                 </body>
-            </DirectionProviderRTL>
-        </html>
+            </html>
+        </DirectionProviderRTL>
     );
 }
