@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import { Navbar } from "@/components/layout/navbar";
+import { FooterSection } from "@/components/layout/sections/footer";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
                 </ThemeProvider>
                 <SpeedInsights />
                 <Analytics />
+                <FooterSection />
             </body>
         </html>
     );
