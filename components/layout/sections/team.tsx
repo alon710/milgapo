@@ -4,7 +4,7 @@ import Link from "next/link";
 import AccountIcon from "@/components/icons/github-icon";
 import LinkedInIcon from "@/components/icons/linkedin-icon";
 import XIcon from "@/components/icons/x-icon";
-import { Card, CardContent, CardFooter,CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 interface TeamProps {
     imageUrl: string;
     firstName: string;
