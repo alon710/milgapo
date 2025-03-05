@@ -22,7 +22,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="pt-br" suppressHydrationWarning>
+        <html lang="he" dir="rtl" suppressHydrationWarning>
             <body className={cn("min-h-screen bg-background", inter.className)}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                     <Navbar />
