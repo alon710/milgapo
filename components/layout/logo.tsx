@@ -4,11 +4,11 @@ import { JSX } from "react/jsx-runtime";
 
 import { commonConfig } from "@/config/common";
 
-type SiteLogoProps = {
+type LogoProps = {
     href: string;
 };
 
-export const SiteLogo = (props: SiteLogoProps): JSX.Element => {
+export const Logo = (props: LogoProps): JSX.Element => {
     return (
         <>
             <div className="col-span-full xl:col-span-2">

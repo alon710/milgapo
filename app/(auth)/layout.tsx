@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist } from "next/font/google";
 
-import { SiteLogo } from "@/components/layout/site-logo";
+import { Logo } from "@/components/layout/logo";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -23,7 +23,7 @@ export default function RootLayout({
                 <div className="flex-grow flex flex-col justify-center items-center px-4 py-8">
                     <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md space-y-4">
                         <div className="w-full flex justify-center h-16">
-                            <SiteLogo href="/" />
+                            <Logo href="/" />
                         </div>
                         {children}
                     </div>

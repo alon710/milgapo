@@ -34,14 +34,6 @@ export const updateSession = async (request: NextRequest) => {
             console.error("User error", user.error);
         }
 
-        if (request.nextUrl.pathname.startsWith("/dashboard") && user.error) {
-            return NextResponse.redirect(new URL("/login", request.url));
-        }
-
-        if (request.nextUrl.pathname === "/" && !user.error) {
-            return NextResponse.redirect(new URL("/dashboard", request.url));
-        }
-
         return response;
     } catch (e) {
         return NextResponse.next({

@@ -7,7 +7,7 @@ import { Geist } from "next/font/google";
 import { redirect } from "next/navigation";
 
 import HeaderAuth from "@/components/header-auth";
-import { SiteLogo } from "@/components/layout/site-logo";
+import { Logo } from "@/components/layout/logo";
 import { UserProvider } from "@/context/user-context";
 import { createClient } from "@/utils/supabase/server";
 
@@ -36,7 +36,7 @@ export default async function RootLayout({
                 <div className="w-full flex flex-col gap-20 items-center pb-20">
                     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                         <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                            <SiteLogo href="/" />
+                            <Logo href="/" />
                             <HeaderAuth />
                         </div>
                     </nav>
