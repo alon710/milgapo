@@ -1,59 +1,64 @@
 import Link from "next/link";
 
 import { Separator } from "@/components/ui/separator";
-import { Language } from "@/config/language";
+import { L } from "@/config/language";
 
 import { Logo } from "../logo";
 
 // Define footer categories and links
 const footerLinks = [
     {
-        title: Language.footer.contact.title,
+        title: L.footer.contact.title,
         items: [
             {
-                title: Language.footer.contact.email.title,
-                link: `mailto:${Language.footer.contact.email.address}`,
+                title: L.footer.contact.email.title,
+                link: `mailto:${L.footer.contact.email.address}`,
                 target: "_blank"
             },
             {
-                title: Language.footer.contact.facebook.title,
-                link: Language.footer.contact.facebook.link,
+                title: L.footer.contact.facebook.title,
+                link: L.footer.contact.facebook.link,
                 target: "_blank"
             },
             {
-                title: Language.footer.contact.instagram.title,
-                link: Language.footer.contact.instagram.link,
+                title: L.footer.contact.instagram.title,
+                link: L.footer.contact.instagram.link,
                 target: "_blank"
             }
         ]
     },
     {
-        title: Language.footer.information.title,
+        title: L.footer.information.title,
         items: [
             {
-                title: Language.footer.information.terms.title,
-                link: Language.footer.information.privacyPolicy.link
+                title: L.footer.information.terms.title,
+                link: L.footer.information.privacyPolicy.link,
+                target: "_self"
             },
             {
-                title: Language.footer.information.privacyPolicy.title,
-                link: Language.footer.information.terms.link
+                title: L.footer.information.privacyPolicy.title,
+                link: L.footer.information.terms.link,
+                target: "_self"
             }
         ]
     },
     {
-        title: Language.footer.quickNavigation.title,
+        title: L.footer.quickNavigation.title,
         items: [
             {
-                title: Language.footer.quickNavigation.home.title,
-                link: Language.footer.quickNavigation.home.link
+                title: L.footer.quickNavigation.home.title,
+                link: L.footer.quickNavigation.home.link,
+                target: "_self"
             },
             {
-                title: Language.footer.quickNavigation.about.title,
-                link: Language.footer.quickNavigation.about.link
+                title: L.footer.quickNavigation.about.title,
+                link: L.footer.quickNavigation.about.link,
+                target: "_self"
             },
             {
-                title: Language.footer.quickNavigation.privacyPolicy.title,
-                link: Language.footer.quickNavigation.privacyPolicy.link
+                title: L.footer.quickNavigation.privacyPolicy.title,
+                link: L.footer.quickNavigation.privacyPolicy.link,
+                target: "_self"
             }
         ]
     }
@@ -89,8 +94,7 @@ export const FooterSection = () => {
                 <Separator className="my-6" />
                 <section>
                     <h3>
-                        &copy; {new Date().getFullYear()} {Language.common.titleHebrew} -{" "}
-                        {Language.footer.allRightsReserved}
+                        &copy; {new Date().getFullYear()} {L.common.titleHebrew} - {L.footer.allRightsReserved}
                     </h3>
                 </section>
             </div>

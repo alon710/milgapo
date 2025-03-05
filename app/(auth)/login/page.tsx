@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import LoginForm from "@/components/auth/login-form";
-import { authConfig } from "@/config/auth";
+import { L } from "@/config/language";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function Login(props: { searchParams: Promise<{ message: string }> }) {
@@ -16,7 +16,7 @@ export default async function Login(props: { searchParams: Promise<{ message: st
     }
 
     const searchParams = await props.searchParams;
-    const description = <div>{authConfig.loginFormSubTitle}</div>;
+    const description = <div>{L.auth.loginFormSubTitle}</div>;
 
     return (
         <div className="flex flex-col gap-8">

@@ -1,10 +1,30 @@
 import { info } from "console";
 import { title } from "process";
 
-export const Language = {
+export const L = {
     common: {
         titleEnglish: "Milgapo",
         titleHebrew: "מלגפו"
+    },
+    auth: {
+        orContinueWith: "או המשך באמצעות",
+        loginFormSubTitle: "התחברות לחשבון האישי",
+        LoginButtonText: "התחבר",
+        LoginButtonPendingText: "מתחבר...",
+        logoutButtonText: "התנתק",
+        greeting: "שלום",
+        phone: "טלפון",
+        email: "אימייל",
+        providers: {
+            google: "Google",
+            facebook: "Facebook"
+        },
+        otp: {
+            title: "אימות קוד",
+            enterOtp: "הכנס קוד",
+            OtpButtonText: "אימות",
+            OtpButtonPendingText: "מאמת..."
+        }
     },
     footer: {
         allRightsReserved: "כל הזכויות שמורות",
@@ -52,4 +72,4 @@ export const Language = {
     }
 };
 
-export type CommonConfig = typeof Language;
+export type CommonConfig = typeof L;

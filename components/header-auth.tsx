@@ -2,7 +2,7 @@ import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 
 import { signOutAction } from "@/app/actions";
-import { authConfig } from "@/config/auth";
+import { L } from "@/config/language";
 import { createClient } from "@/utils/supabase/server";
 
 import { Button } from "./ui/button";
@@ -27,17 +27,17 @@ export default async function AuthButton() {
 
     return user ? (
         <div className="flex items-center gap-4">
-            {authConfig.greeting} {getUserGreetingName(user)}
+            {L.auth.greeting} {getUserGreetingName(user)}
             <form action={signOutAction}>
                 <Button type="submit" variant={"default"} size="sm">
-                    {authConfig.logoutButtonText}
+                    {L.auth.logoutButtonText}
                 </Button>
             </form>
         </div>
     ) : (
         <div className="flex gap-2">
             <Button asChild size="sm" variant={"default"}>
-                <Link href="/login">{authConfig.LoginButtonText}</Link>
+                <Link href="/login">{L.auth.LoginButtonText}</Link>
             </Button>
         </div>
     );

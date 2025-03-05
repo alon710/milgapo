@@ -5,7 +5,7 @@ import { FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 import { Button } from "@/components/ui/button";
-import { authConfig } from "@/config/auth";
+import { L } from "@/config/language";
 import { createClient } from "@/utils/supabase/client";
 interface SocialLoginButtonProps {
     provider: "google" | "facebook";
@@ -17,13 +17,13 @@ export function SocialLoginButton({ provider, onClick }: SocialLoginButtonProps)
         if (provider === "google") {
             return {
                 icon: <FcGoogle className="mx-1" />,
-                text: authConfig.google,
+                text: L.auth.providers.google,
                 className: "bg-white text-black border border-gray-300 hover:bg-gray-100 font-sans"
             };
         } else if (provider === "facebook") {
             return {
                 icon: <FaFacebookF className="mx-1" />,
-                text: authConfig.facebook,
+                text: L.auth.providers.facebook,
                 className: "bg-[#1877F2] text-white hover:bg-blue-600 font-sans"
             };
         }
@@ -61,7 +61,7 @@ export function SocialLoginButtons() {
         <div>
             <div className="flex items-center">
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
-                <span className="px-2 text-gray-500 dark:text-gray-400">{authConfig.orContinueWith}</span>
+                <span className="px-2 text-gray-500 dark:text-gray-400">{L.auth.orContinueWith}</span>
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
             </div>
             <div className="mt-2 grid grid-cols-2 gap-3">

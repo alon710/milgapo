@@ -2,7 +2,7 @@ import { GraduationCapIcon } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react/jsx-runtime";
 
-import { Language } from "@/config/language";
+import { L } from "@/config/language";
 
 type LogoProps = {
     href: string;
@@ -14,7 +14,7 @@ export const Logo = (props: LogoProps): JSX.Element => {
             <div className="col-span-full xl:col-span-2">
                 <Link href={props.href} className="flex font-bold items-center">
                     <GraduationCapIcon className="w-9 h-9 mx-2" />
-                    <h3 className="text-2xl">{Language.common.titleEnglish}</h3>
+                    <h3 className="text-2xl">{L.common.titleEnglish}</h3>
                 </Link>
             </div>
         </>

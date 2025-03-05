@@ -8,7 +8,7 @@ import { AuthFormLayout } from "@/components/auth/auth-form-layout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { authConfig } from "@/config/auth";
+import { L } from "@/config/language";
 
 type LoginFormProps = {
     description: JSX.Element;
@@ -31,11 +31,11 @@ export default function LoginForm({ description, error }: LoginFormProps) {
 
     return (
         <AuthFormLayout
-            title={authConfig.LoginButtonTitle}
+            title={L.auth.LoginButtonText}
             description={description}
             submitAction={handleSubmit}
-            buttonText={authConfig.LoginButtonText}
-            pendingText={authConfig.LoginButtonPendingText}
+            buttonText={L.auth.LoginButtonText}
+            pendingText={L.auth.LoginButtonPendingText}
         >
             <ToggleGroup
                 type="single"
@@ -44,13 +44,13 @@ export default function LoginForm({ description, error }: LoginFormProps) {
                 className="flex mb-4 w-full"
             >
                 <ToggleGroupItem value="phone" className="flex-1 px-4 py-1 border rounded-e">
-                    {authConfig.phone}
+                    {L.auth.phone}
                 </ToggleGroupItem>
                 <ToggleGroupItem value="email" className="flex-1 px-4 py-1 border rounded-s">
-                    {authConfig.email}
+                    {L.auth.email}
                 </ToggleGroupItem>
             </ToggleGroup>
-            <Label htmlFor="contact">{contactMethod === "email" ? authConfig.email : authConfig.phone}</Label>
+            <Label htmlFor="contact">{contactMethod === "email" ? L.auth.email : L.auth.phone}</Label>
             <Input
                 id="contact"
                 name="contact"
