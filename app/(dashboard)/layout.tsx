@@ -1,22 +1,35 @@
+// app/layout.tsx or app/layout.js
 import "../globals.css";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist } from "next/font/google";
+import { redirect } from "next/navigation";
 
 import HeaderAuth from "@/components/header-auth";
 import { SiteLogo } from "@/components/layout/site-logo";
+import { UserProvider } from "@/context/user-context";
+import { createClient } from "@/utils/supabase/server";
 
 const geistSans = Geist({
     display: "swap",
     subsets: ["latin"]
 });
 
-export default function RootLayout({
+export default async function RootLayout({
     children
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const supabase = await createClient();
+    const {
+        data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        return redirect("/login");
+    }
+
     return (
         <html lang="he" dir="rtl" className={geistSans.className} suppressHydrationWarning>
             <body className="bg-background text-foreground">
@@ -28,7 +41,7 @@ export default function RootLayout({
                         </div>
                     </nav>
                     <div className="flex flex-col gap-20 max-w-5xl p-5">
-                        {children}
+                        <UserProvider user={user}>{children}</UserProvider>
                         <SpeedInsights />
                         <Analytics />
                     </div>
