@@ -1,73 +1,87 @@
 "use client";
 
 import { redirect } from "next/navigation";
+import { useState } from "react";
 import { FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
-import { Button } from "@/components/ui/button";
-import { authConfig } from "@/config/auth";
+import { AuthButton } from "@/components/auth/auth-button";
+import { t } from "@/config/languages";
 import { createClient } from "@/utils/supabase/client";
+
 interface SocialLoginButtonProps {
     provider: "google" | "facebook";
     onClick: () => void;
+    isLoading: boolean;
 }
 
-export function SocialLoginButton({ provider, onClick }: SocialLoginButtonProps) {
+export function SocialLoginButton({ provider, onClick, isLoading }: SocialLoginButtonProps) {
     const { icon, text, className } = (() => {
         if (provider === "google") {
             return {
-                icon: <FcGoogle className="mx-1" />,
-                text: authConfig.google,
-                className: "bg-white text-black border border-gray-300 hover:bg-gray-100 font-sans"
+                icon: <FcGoogle className="text-xl" />,
+                text: t.auth.login.googleButton,
+                className: "bg-white text-black border border-gray-300 hover:bg-gray-100"
             };
         } else if (provider === "facebook") {
             return {
-                icon: <FaFacebookF className="mx-1" />,
-                text: authConfig.facebook,
-                className: "bg-[#1877F2] text-white hover:bg-blue-600 font-sans"
+                icon: <FaFacebookF className="text-xl text-white" />,
+                text: t.auth.login.facebookButton,
+                className: "bg-[#1877F2] text-white hover:bg-blue-600 hover:text-white"
             };
         }
         return { icon: null, text: "", className: "" };
     })();
 
     return (
-        <Button type="button" onClick={onClick} className={className}>
-            {icon}
-            {text}
-        </Button>
+        <AuthButton
+            type="button"
+            onClick={onClick}
+            isLoading={isLoading}
+            className={`${className} flex items-center justify-center gap-2 h-10 shadow-sm`}
+            variant="ghost"
+        >
+            <span className="flex items-center justify-center w-6 h-6">{!isLoading && icon}</span>
+            <span>{text}</span>
+        </AuthButton>
     );
 }
 
 export function SocialLoginButtons() {
+    const [loadingProvider, setLoadingProvider] = useState<"google" | "facebook" | null>(null);
+
     async function handleSocialSignIn(provider: "google" | "facebook") {
-        const supabase = await createClient();
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: provider,
-            options: {
-                redirectTo: `${origin}/auth/callback`
+        setLoadingProvider(provider);
+        try {
+            const supabase = await createClient();
+            const { data } = await supabase.auth.signInWithOAuth({
+                provider: provider,
+                options: {
+                    redirectTo: `${origin}/auth/callback`
+                }
+            });
+
+            if (data.url) {
+                redirect(data.url);
             }
-        });
-
-        if (data.url) {
-            redirect(data.url);
-        }
-
-        if (error) {
-            return;
+        } catch {
+            // Reset loading state on error
+            setLoadingProvider(null);
         }
     }
 
     return (
-        <div>
-            <div className="flex items-center">
-                <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
-                <span className="px-2 text-gray-500 dark:text-gray-400">{authConfig.orContinueWith}</span>
-                <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-3">
-                <SocialLoginButton provider="google" onClick={() => handleSocialSignIn("google")} />
-                <SocialLoginButton provider="facebook" onClick={() => handleSocialSignIn("facebook")} />
-            </div>
+        <div className="grid grid-cols-2 gap-3 mt-4">
+            <SocialLoginButton
+                provider="google"
+                onClick={() => handleSocialSignIn("google")}
+                isLoading={loadingProvider === "google"}
+            />
+            <SocialLoginButton
+                provider="facebook"
+                onClick={() => handleSocialSignIn("facebook")}
+                isLoading={loadingProvider === "facebook"}
+            />
         </div>
     );
 }

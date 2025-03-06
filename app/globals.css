@@ -5,30 +5,27 @@
 @layer base {
     :root {
         --background: 0 0% 98%;
-        --foreground: 0 0% 10%;
+        --foreground: 222 47% 11%;
         --card: 0 0% 100%;
-        --card-foreground: 0 0% 15%;
-        --popover: 0 10% 95%;
-        --popover-foreground: 0 0% 10%;
-        --primary: 220 80% 56%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 240 20% 90%;
-        --secondary-foreground: 0 0% 15%;
-        --muted: 0 0% 94%;
-        --muted-foreground: 0 0% 40%;
-        --accent: 160 60% 45%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 90% 50%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 85%;
-        --input: 0 0% 92%;
-        --ring: 220 80% 60%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 220 85% 57%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222 47% 11%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215 16% 47%;
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222 47% 11%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 221 83% 53%;
         --radius: 0.75rem;
-        --chart-1: 10 85% 60%;
-        --chart-2: 170 70% 50%;
-        --chart-3: 260 60% 45%;
-        --chart-4: 50 75% 65%;
-        --chart-5: 30 80% 60%;
+
+        --font-sans: var(--font-rubik);
     }
 }
 
@@ -38,5 +35,73 @@
     }
     body {
         @apply bg-background text-foreground;
+        font-family: var(--font-sans);
+        font-weight: 300;
+        font-feature-settings:
+            "rlig" 1,
+            "calt" 1;
     }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 400;
+    }
+    /* Always ensure placeholders are left-to-right */
+    ::placeholder {
+        direction: ltr;
+        text-align: left;
+    }
+}
+
+@layer utilities {
+    /* RTL support */
+    .rtl {
+        direction: rtl;
+    }
+
+    /* Shadow utilities */
+    .shadow-subtle {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Focus styles */
+    .focus-ring {
+        @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2;
+    }
+
+    /* Error message */
+    .error-message {
+        @apply text-sm p-3 rounded bg-red-50 border border-red-100 text-red-600;
+    }
+}
+
+/* React Phone Number Input Resets */
+.PhoneInputCountryIcon--border {
+    box-shadow: none !important;
+    background: none !important;
+}
+
+/* Force the dropdown to be on the left side, even in RTL layouts */
+.rtl .PhoneInput {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+/* RTL support for country dropdown */
+.rtl .cmd-input {
+    text-align: right;
+}
+
+/* Fix RTL placeholder for command input */
+.rtl .cmd-empty {
+    text-align: right;
+}
+
+/* RTL command input placeholder */
+.rtl [cmdk-input]::placeholder {
+    direction: rtl;
+    text-align: right;
 }

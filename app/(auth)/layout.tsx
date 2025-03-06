@@ -2,34 +2,29 @@ import "../globals.css";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Geist } from "next/font/google";
+import { Rubik } from "next/font/google";
 
-import { SiteLogo } from "@/components/layout/site-logo";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { DirectionProviderRTL } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
+const rubik = Rubik({
+    subsets: ["latin", "hebrew"],
+    weight: ["300", "400", "500", "600"],
     display: "swap",
-    subsets: ["latin"]
+    variable: "--font-rubik"
 });
 
-export default function RootLayout({
+export default function AuthLayout({
     children
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
         <DirectionProviderRTL>
-            <html className={geistSans.className} suppressHydrationWarning>
-                <body className="bg-background text-foreground flex flex-col min-h-screen">
-                    <div className="flex-grow flex flex-col justify-center items-center px-4 py-8">
-                        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md space-y-4">
-                            <div className="w-full flex justify-center h-16">
-                                <SiteLogo href="/" />
-                            </div>
-                            {children}
-                        </div>
-                    </div>
+            <html lang="he" dir="rtl" className={rubik.className} suppressHydrationWarning>
+                <body className="text-foreground flex flex-col min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+                    <AuthProvider>{children}</AuthProvider>
 
                     <SpeedInsights />
                     <Analytics />

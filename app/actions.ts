@@ -23,7 +23,7 @@ export const signInAction = async ({ contact, method }: SignInData) => {
         return redirect(`/login?message=${encodeURIComponent(error.message)}`);
     }
 
-    return redirect(`/otp-verification?contact=${encodeURIComponent(contact)}&method=${method}`);
+    return redirect(`/otp?contact=${encodeURIComponent(contact)}&method=${method}`);
 };
 
 export const signOutAction = async () => {

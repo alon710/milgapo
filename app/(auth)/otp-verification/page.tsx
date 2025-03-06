@@ -1,11 +1,6 @@
-import React, { Suspense } from "react";
+import { redirect } from "next/navigation";
 
-import OTPVerificationForm from "@/components/auth/otp-verification-form";
-
-export default function OTPVerificationPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <OTPVerificationForm />
-        </Suspense>
-    );
+export default function OTPVerificationPage({ searchParams }: { searchParams: { contact?: string; method?: string } }) {
+    const queryString = new URLSearchParams(searchParams as Record<string, string>).toString();
+    redirect(`/otp${queryString ? "?" + queryString : ""}`);
 }
