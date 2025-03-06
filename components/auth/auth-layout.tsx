@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 
 import { TermsFooter } from "@/components/auth/terms-footer";
+import { SiteLogo } from "@/components/layout/site-logo";
 import { cn } from "@/lib/utils";
 
 type AuthLayoutProps = {
@@ -21,6 +22,9 @@ export function AuthLayout({ children, title, subtitle, className }: AuthLayoutP
             )}
         >
             <div className="w-full max-w-md space-y-6">
+                <div className="flex justify-center mb-6">
+                    <SiteLogo href="/" />
+                </div>
                 <div className="bg-card p-8 rounded-lg shadow-sm space-y-6">
                     {title && <h1 className="text-2xl font-medium text-center">{title}</h1>}
                     {subtitle && <p className="text-muted-foreground text-center">{subtitle}</p>}
