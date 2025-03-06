@@ -34,7 +34,7 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
                 inputMode="numeric"
                 pattern="[0-9]*"
                 maxLength={length}
-                placeholder={heIL.auth.otp.codeRequired}
+                placeholder={heIL.auth.otp.otpPlaceHolder}
                 value={value}
                 onChange={handleChange}
                 className="w-full h-12 sm:h-10 text-center text-base sm:text-sm font-medium shadow-sm placeholder:text-center rounded-md transition-all duration-200"

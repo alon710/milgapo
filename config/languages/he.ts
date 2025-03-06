@@ -42,7 +42,7 @@ export const heIL = {
             validatingCode: "מאמת...",
             navigatingBack: "חוזר לדף ההתחברות...",
             invalidCode: "קוד האימות פג תוקף או לא תקין. אנא נסה שוב.",
-            codeRequired: "_ _ _ _ _ _"
+            otpPlaceHolder: "_ _ _ _ _ _"
         },
         callback: {
             title: "מתחבר למערכת",
