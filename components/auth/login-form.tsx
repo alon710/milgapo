@@ -101,10 +101,10 @@ export default function LoginForm({ error }: LoginFormProps) {
     return (
         <AuthLayout title={t.auth.login.title} subtitle={t.auth.login.subtitle}>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
-                    <div className="space-y-6" data-page="login">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6 w-full">
+                    <div className="space-y-4 sm:space-y-6" data-page="login">
                         {formError && (
-                            <div className="error-message">
+                            <div className="error-message text-sm sm:text-base">
                                 <span>{formError}</span>
                             </div>
                         )}
@@ -125,14 +125,14 @@ export default function LoginForm({ error }: LoginFormProps) {
                                 <ToggleGroupItem
                                     value="email"
                                     aria-label={t.auth.login.emailToggle}
-                                    className="flex-1 px-3 py-2 data-[state=on]:bg-primary/10"
+                                    className="flex-1 px-3 py-1.5 sm:py-2 text-sm sm:text-base data-[state=on]:bg-primary/10"
                                 >
                                     {t.auth.login.emailToggle}
                                 </ToggleGroupItem>
                                 <ToggleGroupItem
                                     value="phone"
                                     aria-label={t.auth.login.phoneToggle}
-                                    className="flex-1 px-3 py-2 data-[state=on]:bg-primary/10"
+                                    className="flex-1 px-3 py-1.5 sm:py-2 text-sm sm:text-base data-[state=on]:bg-primary/10"
                                 >
                                     {t.auth.login.phoneToggle}
                                 </ToggleGroupItem>
@@ -150,7 +150,7 @@ export default function LoginForm({ error }: LoginFormProps) {
                                                 {...field}
                                                 type="email"
                                                 placeholder={t.auth.login.emailPlaceholder}
-                                                className="text-left shadow-sm"
+                                                className="text-left shadow-sm text-sm sm:text-base h-10 sm:h-11"
                                                 dir="ltr"
                                             />
                                         ) : (
@@ -158,7 +158,7 @@ export default function LoginForm({ error }: LoginFormProps) {
                                                 <PhoneInput
                                                     {...field}
                                                     placeholder={t.auth.login.phonePlaceholder}
-                                                    className="shadow-sm"
+                                                    className="shadow-sm text-sm sm:text-base h-10 sm:h-11"
                                                     onChange={(value) => {
                                                         if (formError) setFormError("");
                                                         field.onChange(value);
@@ -167,20 +167,25 @@ export default function LoginForm({ error }: LoginFormProps) {
                                             </div>
                                         )}
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-xs sm:text-sm" />
                                 </FormItem>
                             )}
                         />
 
                         <div>
-                            <AuthButton type="submit" isLoading={isSubmitting} loadingText={t.auth.login.sendingCode}>
+                            <AuthButton
+                                type="submit"
+                                isLoading={isSubmitting}
+                                loadingText={t.auth.login.sendingCode}
+                                className="h-10 sm:h-11 text-sm sm:text-base"
+                            >
                                 {t.auth.login.submitButton}
                             </AuthButton>
                         </div>
                     </div>
 
-                    <div className="pt-2">
-                        <DividerText text={t.auth.login.orContinueWith} />
+                    <div className="pt-1 sm:pt-2">
+                        <DividerText text={t.auth.login.orContinueWith} className="text-xs sm:text-sm" />
                         <SocialLoginButtons />
                     </div>
                 </form>

@@ -91,31 +91,32 @@ export default function OTPForm() {
                     disabled={isNavigating}
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-secondary/80"
+                    className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-secondary/80"
                     aria-label="Back to login"
                 >
-                    <ArrowLeft className="h-4 w-4" />
+                    <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
             }
         >
-            <form onSubmit={handleSubmit} className="space-y-6 w-full">
-                <div className="space-y-6" data-page="otp">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 w-full">
+                <div className="space-y-4 sm:space-y-6" data-page="otp">
                     {error && (
-                        <div className="error-message">
+                        <div className="error-message text-sm sm:text-base">
                             <span>{error}</span>
                         </div>
                     )}
 
-                    <div className="py-2">
+                    <div className="py-1 sm:py-2">
                         <OTPInput length={6} value={otp} onChange={setOtp} />
                     </div>
 
-                    <div className="flex flex-col gap-3 mt-4">
+                    <div className="flex flex-col gap-3 mt-2 sm:mt-4">
                         <AuthButton
                             type="submit"
                             isLoading={isSubmitting}
                             loadingText={t.auth.otp.validatingCode}
                             disabled={otp.length !== 6}
+                            className="h-10 sm:h-11 text-sm sm:text-base"
                         >
                             {t.auth.otp.submitButton}
                         </AuthButton>

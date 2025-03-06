@@ -22,9 +22,9 @@ export function AuthButton({
     return (
         <Button className={`w-full shadow-sm ${className}`} disabled={isLoading || disabled} {...props}>
             {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-1.5 sm:gap-2">
                     {loadingText || children}
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                 </span>
             ) : (
                 children
