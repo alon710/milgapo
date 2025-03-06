@@ -92,7 +92,7 @@ export default function OTPForm() {
                             signal
                         })
                         .then((credential: OTPCredential | null) => {
-                            if (credential && credential.code) {
+                            if (credential?.code) {
                                 setOtp(credential.code);
                                 // Form will auto-submit due to the onComplete handler
                             }
