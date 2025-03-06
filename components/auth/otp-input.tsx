@@ -8,9 +8,11 @@ interface OTPInputProps {
     length: number;
     value: string;
     onChange: (value: string) => void;
+    onComplete?: () => void;
+    onClick?: () => void;
 }
 
-export function OTPInput({ length, value, onChange }: OTPInputProps) {
+export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPInputProps) {
     const [otp, setOtp] = useState<string[]>(value.split("").concat(Array(length - value.length).fill("")));
     const [inputRefs, setInputRefs] = useState<HTMLInputElement[]>([]);
     const [activeInput, setActiveInput] = useState<number>(-1);
@@ -27,6 +29,12 @@ export function OTPInput({ length, value, onChange }: OTPInputProps) {
         setOtp(value.split("").concat(Array(length - value.length).fill("")));
     }, [value, length]);
 
+    useEffect(() => {
+        if (value.length === length && onComplete) {
+            onComplete();
+        }
+    }, [value, length, onComplete]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newValue = e.target.value;
 
@@ -36,7 +44,8 @@ export function OTPInput({ length, value, onChange }: OTPInputProps) {
         newOtp[index] = newValue;
         setOtp(newOtp);
 
-        onChange(newOtp.join(""));
+        const otpValue = newOtp.join("");
+        onChange(otpValue);
 
         if (newValue && index < length - 1 && inputRefs[index + 1]) {
             inputRefs[index + 1].focus();
@@ -96,7 +105,7 @@ export function OTPInput({ length, value, onChange }: OTPInputProps) {
     };
 
     return (
-        <div className="flex justify-center gap-2 sm:gap-1 ltr" dir="ltr">
+        <div className="flex justify-center gap-2 sm:gap-1 ltr" dir="ltr" onClick={onClick}>
             {otp.map((digit, index) => (
                 <div key={index} className="w-11 h-12 sm:w-9 sm:h-10 md:w-11 md:h-12 relative">
                     <Input
@@ -119,6 +128,7 @@ export function OTPInput({ length, value, onChange }: OTPInputProps) {
                             ${digit ? "bg-primary/5 border-primary/30" : ""}
                         `}
                         autoFocus={index === 0 && !digit}
+                        autoComplete={index === 0 ? "one-time-code" : "off"}
                     />
                     {index < length - 1 && (
                         <div className="absolute top-1/2 -right-2 sm:-right-1 w-2 sm:w-1 h-[2px] sm:h-[1px] bg-gray-300" />

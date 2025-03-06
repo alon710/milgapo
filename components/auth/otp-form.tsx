@@ -3,7 +3,7 @@
 import { VerifyOtpParams } from "@supabase/supabase-js";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AuthButton } from "@/components/auth/auth-button";
 import { AuthLayout } from "@/components/auth/auth-layout";
@@ -11,6 +11,16 @@ import { OTPInput } from "@/components/auth/otp-input";
 import { Button } from "@/components/ui/button";
 import { t } from "@/config/languages";
 import { createClient } from "@/utils/supabase/client";
+
+// TypeScript definitions for WebOTP API
+interface OTPCredential extends Credential {
+    code: string;
+}
+
+interface OTPCredentialRequestOptions {
+    otp: { transport: string[] };
+    signal?: AbortSignal;
+}
 
 // Helper function to get a cookie value
 function getCookie(name: string): string {
@@ -32,6 +42,11 @@ export default function OTPForm() {
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
+    const formRef = useRef<HTMLFormElement>(null);
+    // Track if we've had a failed attempt already
+    const [hadFailedAttempt, setHadFailedAttempt] = useState(false);
+    // Track if auto-submission is currently allowed
+    const autoSubmitAllowedRef = useRef(true);
 
     // Read contact and method from cookies on component mount
     useEffect(() => {
@@ -54,6 +69,78 @@ export default function OTPForm() {
             }
         }
     }, [router]);
+
+    // Set up WebOTP API for SMS auto-fill on mobile
+    useEffect(() => {
+        if (typeof window !== "undefined" && method === "phone") {
+            // Check if WebOTP API is available
+            if ("OTPCredential" in window) {
+                // Try to use the WebOTP API for SMS autofill
+                try {
+                    // Use a type assertion to avoid TypeScript errors with the WebOTP API
+                    const abortController = new AbortController();
+                    const { signal } = abortController;
+
+                    // Cast to OTP credential interface
+                    (
+                        navigator.credentials as {
+                            get(options: OTPCredentialRequestOptions): Promise<OTPCredential | null>;
+                        }
+                    )
+                        .get({
+                            otp: { transport: ["sms"] },
+                            signal
+                        })
+                        .then((credential: OTPCredential | null) => {
+                            if (credential?.code) {
+                                setOtp(credential.code);
+                                // Form will auto-submit due to the onComplete handler
+                            }
+                        })
+                        .catch((err: Error) => {
+                            // WebOTP API error - silently fail
+                            console.log("WebOTP API error:", err);
+                        });
+
+                    // Cleanup abort controller after 3 minutes
+                    const timeout = setTimeout(
+                        () => {
+                            abortController.abort();
+                        },
+                        3 * 60 * 1000
+                    );
+
+                    return () => {
+                        clearTimeout(timeout);
+                        abortController.abort();
+                    };
+                } catch (error) {
+                    // Browser doesn't fully support WebOTP
+                    console.log("WebOTP not fully supported", error);
+                }
+            }
+        }
+    }, [method]);
+
+    // Handler for when all OTP digits are entered
+    const handleOtpComplete = () => {
+        // Only auto-submit if:
+        // 1. We have all 6 digits
+        // 2. We're not already submitting
+        // 3. We haven't had a failed attempt
+        // 4. Auto-submission is currently allowed
+        if (otp.length === 6 && !isSubmitting && !hadFailedAttempt && autoSubmitAllowedRef.current) {
+            // Prevent multiple rapid auto-submissions
+            autoSubmitAllowedRef.current = false;
+            // Automatically submit the form when all 6 digits are entered
+            formRef.current?.requestSubmit();
+
+            // Re-enable auto-submission after a delay (preventing multiple rapid submissions)
+            setTimeout(() => {
+                autoSubmitAllowedRef.current = true;
+            }, 2000);
+        }
+    };
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -86,7 +173,12 @@ export default function OTPForm() {
             const { error: verifyError } = await supabase.auth.verifyOtp(verifyParams);
 
             if (verifyError) {
+                // Set flag to prevent auto-resubmission after a failed attempt
+                setHadFailedAttempt(true);
                 setError(verifyError.message);
+
+                // Optional: Clear the OTP input to force the user to re-enter the code
+                // setOtp("");
             } else {
                 // Clear the auth cookies after successful verification
                 document.cookie = "auth_contact=; max-age=0; path=/; Secure; SameSite=Strict";
@@ -94,6 +186,8 @@ export default function OTPForm() {
                 router.push("/");
             }
         } catch (error) {
+            // Also set flag for unexpected errors
+            setHadFailedAttempt(true);
             setError(error instanceof Error ? error.message : t.auth.errors.serverError);
         } finally {
             setIsSubmitting(false);
@@ -123,7 +217,7 @@ export default function OTPForm() {
                 </Button>
             }
         >
-            <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-4 w-full">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-5 sm:space-y-4 w-full">
                 <div className="space-y-5 sm:space-y-4" data-page="otp">
                     {error && (
                         <div className="error-message text-base sm:text-sm">
@@ -132,7 +226,19 @@ export default function OTPForm() {
                     )}
 
                     <div className="py-3 sm:py-1">
-                        <OTPInput length={6} value={otp} onChange={setOtp} />
+                        <OTPInput
+                            length={6}
+                            value={otp}
+                            onChange={setOtp}
+                            onComplete={handleOtpComplete}
+                            onClick={() => {
+                                // If there was a failed attempt and user clicks again, clear the OTP
+                                if (hadFailedAttempt) {
+                                    setOtp("");
+                                    setHadFailedAttempt(false);
+                                }
+                            }}
+                        />
                     </div>
 
                     <div className="flex flex-col gap-3 mt-4 sm:mt-2">
@@ -140,7 +246,7 @@ export default function OTPForm() {
                             type="submit"
                             isLoading={isSubmitting}
                             loadingText={t.auth.otp.validatingCode}
-                            disabled={otp.length !== 6}
+                            disabled={otp.length !== 6 || isSubmitting}
                             className="h-12 sm:h-10 text-base sm:text-sm"
                         >
                             {t.auth.otp.submitButton}
