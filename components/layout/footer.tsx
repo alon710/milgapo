@@ -9,7 +9,7 @@ export function SiteFooter() {
                 <div className="container py-4">
                     <div className="flex items-center justify-between">
                         <div className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-right">
-                            {currentYear} | {t.common.title} | © כל הזכויות שמורות
+                            {currentYear} | {t.common.title} | © {t.common.allRightsReserved}
                         </div>
                         <SiteLogo href="/" />
                     </div>

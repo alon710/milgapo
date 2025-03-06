@@ -35,6 +35,7 @@ const formSchema = z.object({
 export default function LoginForm({ error }: LoginFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState(error || "");
+    const [requestInProgress, setRequestInProgress] = useState(false);
     const supabase = createClient();
 
     const emailButtonRef = useRef<HTMLButtonElement>(null);
@@ -51,6 +52,8 @@ export default function LoginForm({ error }: LoginFormProps) {
     const contactMethod = form.watch("contactMethod");
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        if (requestInProgress) return;
+
         setFormError("");
 
         const { contactMethod, contact } = values;
@@ -66,6 +69,7 @@ export default function LoginForm({ error }: LoginFormProps) {
         }
 
         setIsSubmitting(true);
+        setRequestInProgress(true);
 
         try {
             let result;
@@ -88,9 +92,9 @@ export default function LoginForm({ error }: LoginFormProps) {
 
             if (result.error) {
                 setFormError(result.error.message);
+                setRequestInProgress(false);
             } else {
                 // Store contact info securely in a cookie instead of URL params
-                // Use HttpOnly cookie for server access, with short expiration
                 document.cookie = `auth_contact=${encodeURIComponent(contact)}; max-age=300; path=/; Secure; SameSite=Strict`;
                 document.cookie = `auth_method=${contactMethod}; max-age=300; path=/; Secure; SameSite=Strict`;
 
@@ -100,6 +104,7 @@ export default function LoginForm({ error }: LoginFormProps) {
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : t.auth.errors.serverError;
             setFormError(errorMessage);
+            setRequestInProgress(false);
         } finally {
             setIsSubmitting(false);
         }

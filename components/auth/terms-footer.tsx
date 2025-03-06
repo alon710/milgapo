@@ -8,15 +8,15 @@ export function TermsFooter() {
     return (
         <div className="mt-6 text-center text-xs text-muted-foreground">
             <span>
-                {t.auth.login.termsAgreement.split("תנאי השימוש")[0]}
+                {t.auth.login.termsAgreement.before}
                 <Link href="/terms" className="underline hover:text-primary">
                     {t.auth.login.termsLink}
-                </Link>{" "}
-                {t.auth.login.termsAgreement.split("תנאי השימוש")[1].split("מדיניות הפרטיות")[0]}
+                </Link>
+                {t.auth.login.termsAgreement.middle}
                 <Link href="/privacy" className="underline hover:text-primary">
                     {t.auth.login.privacyLink}
                 </Link>
-                {t.auth.login.termsAgreement.split("מדיניות הפרטיות")[1]}
+                {t.auth.login.termsAgreement.after}
             </span>
         </div>
     );

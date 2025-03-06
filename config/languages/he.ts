@@ -8,7 +8,8 @@ export const heIL = {
         loading: "טוען...",
         appVersion: "1.0.0",
         copyrightYear: new Date().getFullYear(),
-        greeting: "שלום"
+        greeting: "שלום",
+        allRightsReserved: "כל הזכויות שמורות"
     },
     auth: {
         login: {
@@ -22,7 +23,11 @@ export const heIL = {
             orContinueWith: "או המשך עם",
             googleButton: "גוגל",
             facebookButton: "פייסבוק",
-            termsAgreement: "בלחיצה על כפתור ״התחבר״ אני מסכים/ה לתנאי השימוש ולמדיניות הפרטיות",
+            termsAgreement: {
+                before: "בלחיצה על כפתור ״התחבר״ אני מסכים/ה ל",
+                middle: " ול",
+                after: ""
+            },
             termsLink: "תנאי השימוש",
             privacyLink: "מדיניות הפרטיות",
             backToHome: "חזרה לדף הבית",
