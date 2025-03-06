@@ -5,6 +5,9 @@ const config = {
     content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
     prefix: "",
     theme: {
+        fontFamily: {
+            sans: ["var(--font-rubik)"]
+        },
         container: {
             center: true,
             padding: "2rem",
@@ -13,6 +16,13 @@ const config = {
             }
         },
         extend: {
+            fontWeight: {
+                thin: "300",
+                normal: "300",
+                medium: "400",
+                semibold: "500",
+                bold: "600"
+            },
             colors: {
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
