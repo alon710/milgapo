@@ -1,7 +1,7 @@
 "use client";
 
 import { VerifyOtpParams } from "@supabase/supabase-js";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -119,7 +119,7 @@ export default function OTPForm() {
                     className="h-8 w-8 sm:h-7 sm:w-7 rounded-full hover:bg-secondary/80"
                     aria-label="Back to login"
                 >
-                    <ArrowLeft className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+                    <ArrowRight className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                 </Button>
             }
         >
