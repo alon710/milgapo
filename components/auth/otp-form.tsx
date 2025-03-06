@@ -67,20 +67,18 @@ export default function OTPForm() {
     }
 
     return (
-        <AuthLayout
-            title={t.auth.otp.title}
-            subtitle={
-                <span>
-                    {t.auth.otp.subtitle} <strong>{contact}</strong>
-                </span>
-            }
-            type="otp"
-            backButton={{
-                label: t.auth.otp.backButton,
-                onClick: handleBack,
-                isLoading: isNavigating
-            }}
-        >
+        <AuthLayout title={t.auth.otp.title} subtitle={`${t.auth.otp.subtitle} ${contact}`}>
+            <div className="mb-6">
+                <button
+                    type="button"
+                    onClick={handleBack}
+                    disabled={isNavigating}
+                    className="text-sm text-primary hover:underline"
+                >
+                    {t.auth.otp.backButton}
+                </button>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6 w-full">
                 <div className="space-y-6" data-page="otp">
                     {error && <div className="error-message">{error}</div>}

@@ -96,7 +96,7 @@ export default function LoginForm({ error }: LoginFormProps) {
     }
 
     return (
-        <AuthLayout title={t.auth.login.title} subtitle={t.auth.login.subtitle} type="login">
+        <AuthLayout title={t.auth.login.title} subtitle={t.auth.login.subtitle}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
                     <div className="space-y-6" data-page="login">

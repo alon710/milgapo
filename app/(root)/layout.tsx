@@ -8,20 +8,21 @@ import HeaderAuth from "@/components/header-auth";
 import { SiteFooter } from "@/components/layout/footer";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { DirectionProviderRTL } from "@/components/providers";
-import { commonConfig } from "@/config/common";
+import { t } from "@/config/languages";
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
 export const metadata = {
     metadataBase: new URL(defaultUrl),
-    title: commonConfig.titleHebrew,
-    description: commonConfig.description
+    title: `${t.common.title} - ${t.common.logoSubtitle}`,
+    description: t.common.slogan
 };
 
 const geistSans = Geist({
     display: "swap",
     subsets: ["latin"]
 });
+
 export default function RootLayout({
     children
 }: Readonly<{

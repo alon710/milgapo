@@ -1,5 +1,5 @@
-import { SiteLogo } from "@/components/layout/site-logo"; // Add this import
-import { commonConfig } from "@/config/common";
+import { SiteLogo } from "@/components/layout/site-logo";
+import { t } from "@/config/languages";
 
 export function SiteFooter() {
     const currentYear = new Date().getFullYear();
@@ -9,7 +9,7 @@ export function SiteFooter() {
                 <div className="container py-4">
                     <div className="flex items-center justify-between">
                         <div className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-right">
-                            {currentYear} | {commonConfig.titleHebrew} | {commonConfig.allRightsReserved} ©
+                            {currentYear} | {t.common.title} | © כל הזכויות שמורות
                         </div>
                         <SiteLogo href="/" />
                     </div>
