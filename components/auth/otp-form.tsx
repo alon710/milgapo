@@ -146,7 +146,7 @@ export default function OTPForm() {
         e.preventDefault();
 
         if (otp.length !== 6) {
-            setError(t.auth.otp.codeRequired);
+            setError(t.auth.otp.otpPlaceHolder);
             return;
         }
 
