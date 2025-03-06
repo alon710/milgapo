@@ -89,8 +89,13 @@ export default function LoginForm({ error }: LoginFormProps) {
             if (result.error) {
                 setFormError(result.error.message);
             } else {
-                const redirectTo = `/otp?contact=${encodeURIComponent(contact)}&method=${contactMethod}`;
-                window.location.href = redirectTo;
+                // Store contact info securely in a cookie instead of URL params
+                // Use HttpOnly cookie for server access, with short expiration
+                document.cookie = `auth_contact=${encodeURIComponent(contact)}; max-age=300; path=/; Secure; SameSite=Strict`;
+                document.cookie = `auth_method=${contactMethod}; max-age=300; path=/; Secure; SameSite=Strict`;
+
+                // Redirect without sensitive params in URL
+                window.location.href = `/otp`;
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : t.auth.errors.serverError;

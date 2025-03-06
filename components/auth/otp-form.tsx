@@ -2,7 +2,7 @@
 
 import { VerifyOtpParams } from "@supabase/supabase-js";
 import { ArrowLeft } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { AuthButton } from "@/components/auth/auth-button";
@@ -12,26 +12,48 @@ import { Button } from "@/components/ui/button";
 import { t } from "@/config/languages";
 import { createClient } from "@/utils/supabase/client";
 
+// Helper function to get a cookie value
+function getCookie(name: string): string {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        const cookieValue = parts.pop()?.split(";").shift() || "";
+        return decodeURIComponent(cookieValue);
+    }
+    return "";
+}
+
 export default function OTPForm() {
     const supabase = createClient();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const contact = searchParams.get("contact") || "";
-    const method = (searchParams.get("method") as "email" | "phone") || "email";
+    const [contact, setContact] = useState("");
+    const [method, setMethod] = useState<"email" | "phone">("email");
     const [otp, setOtp] = useState("");
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
 
+    // Read contact and method from cookies on component mount
     useEffect(() => {
-        if (!contact) {
-            setError(t.auth.errors.requiredField);
-            const timer = setTimeout(() => {
-                router.push("/login");
-            }, 3000);
-            return () => clearTimeout(timer);
+        // Client-side only
+        if (typeof window !== "undefined") {
+            const cookieContact = getCookie("auth_contact");
+            const cookieMethod = getCookie("auth_method") as "email" | "phone";
+
+            setContact(cookieContact);
+            if (cookieMethod) {
+                setMethod(cookieMethod);
+            }
+
+            if (!cookieContact) {
+                setError(t.auth.errors.requiredField);
+                const timer = setTimeout(() => {
+                    router.push("/login");
+                }, 3000);
+                return () => clearTimeout(timer);
+            }
         }
-    }, [contact, router]);
+    }, [router]);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -66,6 +88,9 @@ export default function OTPForm() {
             if (verifyError) {
                 setError(verifyError.message);
             } else {
+                // Clear the auth cookies after successful verification
+                document.cookie = "auth_contact=; max-age=0; path=/; Secure; SameSite=Strict";
+                document.cookie = "auth_method=; max-age=0; path=/; Secure; SameSite=Strict";
                 router.push("/");
             }
         } catch (error) {
