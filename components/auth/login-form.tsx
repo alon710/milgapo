@@ -21,7 +21,6 @@ type LoginFormProps = {
     error: string | undefined;
 };
 
-// Form schema for validation
 const formSchema = z.object({
     contactMethod: z.enum(["email", "phone"]),
     contact: z.string().refine((value) => {
@@ -50,18 +49,15 @@ export default function LoginForm({ error }: LoginFormProps) {
     const contactMethod = form.watch("contactMethod");
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        // Reset error state
         setFormError("");
 
         const { contactMethod, contact } = values;
 
-        // Additional validation for phone numbers
         if (contactMethod === "phone" && !isValidPhoneNumber(contact)) {
             setFormError(t.auth.errors.invalidPhone);
             return;
         }
 
-        // Additional validation for email format
         if (contactMethod === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
             setFormError(t.auth.errors.invalidEmail);
             return;
@@ -73,7 +69,6 @@ export default function LoginForm({ error }: LoginFormProps) {
             let result;
 
             if (contactMethod === "email") {
-                // Email validation and login logic
                 result = await supabase.auth.signInWithOtp({
                     email: contact,
                     options: {
@@ -81,7 +76,6 @@ export default function LoginForm({ error }: LoginFormProps) {
                     }
                 });
             } else {
-                // Phone validation and login logic
                 result = await supabase.auth.signInWithOtp({
                     phone: contact,
                     options: {
@@ -93,7 +87,6 @@ export default function LoginForm({ error }: LoginFormProps) {
             if (result.error) {
                 setFormError(result.error.message);
             } else {
-                // Redirect to OTP verification page
                 const redirectTo = `/otp?contact=${encodeURIComponent(contact)}&method=${contactMethod}`;
                 window.location.href = redirectTo;
             }
@@ -124,7 +117,6 @@ export default function LoginForm({ error }: LoginFormProps) {
                                     if (value) {
                                         form.setValue("contactMethod", value as "email" | "phone");
                                         form.setValue("contact", "");
-                                        // Clear previous error when changing method
                                         if (formError) setFormError("");
                                     }
                                 }}
@@ -168,7 +160,6 @@ export default function LoginForm({ error }: LoginFormProps) {
                                                     placeholder={t.auth.login.phonePlaceholder}
                                                     className="shadow-sm"
                                                     onChange={(value) => {
-                                                        // Clear previous error when changing
                                                         if (formError) setFormError("");
                                                         field.onChange(value);
                                                     }}

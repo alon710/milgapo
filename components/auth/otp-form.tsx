@@ -23,11 +23,9 @@ export default function OTPForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
 
-    // Validate contact on initial load
     useEffect(() => {
         if (!contact) {
             setError(t.auth.errors.requiredField);
-            // Redirect back to login after a short delay if contact is missing
             const timer = setTimeout(() => {
                 router.push("/login");
             }, 3000);
@@ -47,7 +45,6 @@ export default function OTPForm() {
         setError("");
 
         try {
-            // Verify the OTP
             let verifyParams: VerifyOtpParams;
 
             if (method === "email") {
@@ -69,7 +66,6 @@ export default function OTPForm() {
             if (verifyError) {
                 setError(verifyError.message);
             } else {
-                // Redirect to home page on successful verification
                 router.push("/");
             }
         } catch (error) {
