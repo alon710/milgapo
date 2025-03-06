@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef,useState } from "react";
 
 import { Input } from "@/components/ui/input";
 
@@ -16,6 +16,7 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
     const [otp, setOtp] = useState<string[]>(value.split("").concat(Array(length - value.length).fill("")));
     const [inputRefs, setInputRefs] = useState<HTMLInputElement[]>([]);
     const [activeInput, setActiveInput] = useState<number>(-1);
+    const hiddenInputRef = useRef<HTMLInputElement>(null);
 
     const setRef = (el: HTMLInputElement | null, index: number) => {
         if (el && !inputRefs[index]) {
@@ -34,6 +35,25 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
             onComplete();
         }
     }, [value, length, onComplete]);
+
+    // Handle changes to the hidden WebOTP input
+    const handleHiddenInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value.replace(/\D/g, "").slice(0, length);
+
+        if (newValue) {
+            // Fill in our visible inputs with the OTP digits
+            const newOtp = newValue.split("").concat(Array(length - newValue.length).fill(""));
+            setOtp(newOtp);
+            onChange(newValue);
+
+            // Focus the last filled input or the next empty one
+            const nextIndex = Math.min(newValue.length, length - 1);
+            if (inputRefs[nextIndex]) {
+                inputRefs[nextIndex].focus();
+                setActiveInput(nextIndex);
+            }
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newValue = e.target.value;
@@ -106,6 +126,20 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
 
     return (
         <div className="flex justify-center gap-2 sm:gap-1 ltr" dir="ltr" onClick={onClick}>
+            {/* Hidden input for WebOTP */}
+            <input
+                ref={hiddenInputRef}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="one-time-code"
+                className="sr-only"
+                aria-hidden="true"
+                value=""
+                onChange={handleHiddenInputChange}
+                tabIndex={-1}
+            />
+
             {otp.map((digit, index) => (
                 <div key={index} className="w-11 h-12 sm:w-9 sm:h-10 md:w-11 md:h-12 relative">
                     <Input
@@ -128,7 +162,8 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
                             ${digit ? "bg-primary/5 border-primary/30" : ""}
                         `}
                         autoFocus={index === 0 && !digit}
-                        autoComplete={index === 0 ? "one-time-code" : "off"}
+                        // Remove autoComplete from individual inputs
+                        autoComplete="off"
                     />
                     {index < length - 1 && (
                         <div className="absolute top-1/2 -right-2 sm:-right-1 w-2 sm:w-1 h-[2px] sm:h-[1px] bg-gray-300" />
