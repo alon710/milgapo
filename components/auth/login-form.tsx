@@ -72,14 +72,14 @@ export default function LoginForm({ error }: LoginFormProps) {
                 result = await supabase.auth.signInWithOtp({
                     email: contact,
                     options: {
-                        shouldCreateUser: false
+                        shouldCreateUser: true
                     }
                 });
             } else {
                 result = await supabase.auth.signInWithOtp({
                     phone: contact,
                     options: {
-                        shouldCreateUser: false
+                        shouldCreateUser: true
                     }
                 });
             }
