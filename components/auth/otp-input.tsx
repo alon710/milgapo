@@ -28,7 +28,7 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
     };
 
     return (
-        <div className="w-full  mx-auto" dir="ltr" onClick={onClick}>
+        <div className="w-full" dir="ltr" onClick={onClick}>
             <Input
                 type="text"
                 inputMode="numeric"
@@ -37,7 +37,7 @@ export function OTPInput({ length, value, onChange, onComplete, onClick }: OTPIn
                 placeholder={heIL.auth.otp.codeRequired}
                 value={value}
                 onChange={handleChange}
-                className="text-center text-xl font-medium py-6 placeholder:text-center"
+                className="w-full h-12 sm:h-10 text-center text-base sm:text-sm font-medium shadow-sm placeholder:text-center rounded-md transition-all duration-200"
                 autoComplete="one-time-code"
                 autoFocus
             />
