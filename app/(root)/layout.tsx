@@ -8,20 +8,21 @@ import HeaderAuth from "@/components/header-auth";
 import { SiteFooter } from "@/components/layout/footer";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { DirectionProviderRTL } from "@/components/providers";
-import { commonConfig } from "@/config/common";
+import { t } from "@/config/languages";
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
 export const metadata = {
     metadataBase: new URL(defaultUrl),
-    title: commonConfig.titleHebrew,
-    description: commonConfig.description
+    title: `${t.common.title} - ${t.common.logoSubtitle}`,
+    description: t.common.slogan
 };
 
 const geistSans = Geist({
     display: "swap",
     subsets: ["latin"]
 });
+
 export default function RootLayout({
     children
 }: Readonly<{
@@ -30,7 +31,7 @@ export default function RootLayout({
     return (
         <DirectionProviderRTL>
             <html className={geistSans.className} suppressHydrationWarning>
-                <body className="bg-background text-foreground">
+                <body className="bg-background text-foreground" suppressHydrationWarning>
                     <div className="flex flex-col min-h-screen">
                         <main className="flex-1 flex flex-col items-center">
                             <div className="w-full flex flex-col gap-20 items-center pb-20">
