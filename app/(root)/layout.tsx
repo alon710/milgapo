@@ -31,7 +31,7 @@ export default function RootLayout({
     return (
         <DirectionProviderRTL>
             <html className={geistSans.className} suppressHydrationWarning>
-                <body className="bg-background text-foreground">
+                <body className="bg-background text-foreground" suppressHydrationWarning>
                     <div className="flex flex-col min-h-screen">
                         <main className="flex-1 flex flex-col items-center">
                             <div className="w-full flex flex-col gap-20 items-center pb-20">

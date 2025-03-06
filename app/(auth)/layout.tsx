@@ -23,7 +23,10 @@ export default function AuthLayout({
     return (
         <DirectionProviderRTL>
             <html lang="he" dir="rtl" className={rubik.className} suppressHydrationWarning>
-                <body className="text-foreground flex flex-col min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+                <body
+                    className="text-foreground flex flex-col min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white"
+                    suppressHydrationWarning
+                >
                     <AuthProvider>{children}</AuthProvider>
 
                     <SpeedInsights />
