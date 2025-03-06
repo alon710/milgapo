@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
@@ -13,7 +13,6 @@ import { DividerText } from "@/components/ui/divider-text";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { t } from "@/config/languages";
 import { createClient } from "@/utils/supabase/client";
 
@@ -37,6 +36,9 @@ export default function LoginForm({ error }: LoginFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState(error || "");
     const supabase = createClient();
+
+    const emailButtonRef = useRef<HTMLButtonElement>(null);
+    const phoneButtonRef = useRef<HTMLButtonElement>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -101,42 +103,59 @@ export default function LoginForm({ error }: LoginFormProps) {
     return (
         <AuthLayout title={t.auth.login.title} subtitle={t.auth.login.subtitle}>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6 w-full">
-                    <div className="space-y-4 sm:space-y-6" data-page="login">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 sm:space-y-4 w-full">
+                    <div className="space-y-5 sm:space-y-4" data-page="login">
                         {formError && (
-                            <div className="error-message text-sm sm:text-base">
+                            <div className="error-message text-base sm:text-sm">
                                 <span>{formError}</span>
                             </div>
                         )}
 
-                        <div>
-                            <ToggleGroup
-                                type="single"
-                                value={contactMethod}
-                                onValueChange={(value) => {
-                                    if (value) {
-                                        form.setValue("contactMethod", value as "email" | "phone");
+                        <div className="relative">
+                            <div className="flex justify-center gap-2 overflow-hidden">
+                                <button
+                                    ref={emailButtonRef}
+                                    type="button"
+                                    onClick={() => {
+                                        form.setValue("contactMethod", "email");
                                         form.setValue("contact", "");
                                         if (formError) setFormError("");
-                                    }
-                                }}
-                                className="justify-center"
-                            >
-                                <ToggleGroupItem
-                                    value="email"
-                                    aria-label={t.auth.login.emailToggle}
-                                    className="flex-1 px-3 py-1.5 sm:py-2 text-sm sm:text-base data-[state=on]:bg-primary/10"
+                                    }}
+                                    className={`
+                                        flex-1 py-2.5 sm:py-1.5 px-4 rounded-md
+                                        text-base sm:text-sm font-medium transition-all duration-200
+                                        ${
+                                            contactMethod === "email"
+                                                ? "bg-primary text-white shadow-sm"
+                                                : "bg-secondary/50 text-foreground hover:bg-secondary/70"
+                                        }
+                                    `}
+                                    aria-pressed={contactMethod === "email"}
                                 >
                                     {t.auth.login.emailToggle}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="phone"
-                                    aria-label={t.auth.login.phoneToggle}
-                                    className="flex-1 px-3 py-1.5 sm:py-2 text-sm sm:text-base data-[state=on]:bg-primary/10"
+                                </button>
+                                <button
+                                    ref={phoneButtonRef}
+                                    type="button"
+                                    onClick={() => {
+                                        form.setValue("contactMethod", "phone");
+                                        form.setValue("contact", "");
+                                        if (formError) setFormError("");
+                                    }}
+                                    className={`
+                                        flex-1 py-2.5 sm:py-1.5 px-4 rounded-md
+                                        text-base sm:text-sm font-medium transition-all duration-200
+                                        ${
+                                            contactMethod === "phone"
+                                                ? "bg-primary text-white shadow-sm"
+                                                : "bg-secondary/50 text-foreground hover:bg-secondary/70"
+                                        }
+                                    `}
+                                    aria-pressed={contactMethod === "phone"}
                                 >
                                     {t.auth.login.phoneToggle}
-                                </ToggleGroupItem>
-                            </ToggleGroup>
+                                </button>
+                            </div>
                         </div>
 
                         <FormField
@@ -150,7 +169,7 @@ export default function LoginForm({ error }: LoginFormProps) {
                                                 {...field}
                                                 type="email"
                                                 placeholder={t.auth.login.emailPlaceholder}
-                                                className="text-left shadow-sm text-sm sm:text-base h-10 sm:h-11"
+                                                className="text-left shadow-sm text-base sm:text-sm h-12 sm:h-10"
                                                 dir="ltr"
                                             />
                                         ) : (
@@ -158,7 +177,7 @@ export default function LoginForm({ error }: LoginFormProps) {
                                                 <PhoneInput
                                                     {...field}
                                                     placeholder={t.auth.login.phonePlaceholder}
-                                                    className="shadow-sm text-sm sm:text-base h-10 sm:h-11"
+                                                    className="shadow-sm text-base sm:text-sm h-12 sm:h-10"
                                                     onChange={(value) => {
                                                         if (formError) setFormError("");
                                                         field.onChange(value);
@@ -167,7 +186,7 @@ export default function LoginForm({ error }: LoginFormProps) {
                                             </div>
                                         )}
                                     </FormControl>
-                                    <FormMessage className="text-xs sm:text-sm" />
+                                    <FormMessage className="text-sm sm:text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -177,15 +196,15 @@ export default function LoginForm({ error }: LoginFormProps) {
                                 type="submit"
                                 isLoading={isSubmitting}
                                 loadingText={t.auth.login.sendingCode}
-                                className="h-10 sm:h-11 text-sm sm:text-base"
+                                className="h-12 sm:h-10 text-base sm:text-sm"
                             >
                                 {t.auth.login.submitButton}
                             </AuthButton>
                         </div>
                     </div>
 
-                    <div className="pt-1 sm:pt-2">
-                        <DividerText text={t.auth.login.orContinueWith} className="text-xs sm:text-sm" />
+                    <div className="pt-2">
+                        <DividerText text={t.auth.login.orContinueWith} className="text-sm sm:text-xs" />
                         <SocialLoginButtons />
                     </div>
                 </form>

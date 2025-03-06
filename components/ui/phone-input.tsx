@@ -18,7 +18,7 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> = React.forwa
 >(({ className, onChange, ...props }, ref) => {
     return (
         <div className={cn("flex", className)}>
-            <div className="flex items-center justify-center px-2 sm:px-3 bg-secondary/30 border border-input border-r-0 rounded-s-lg">
+            <div className="flex items-center justify-center px-3 sm:px-2 bg-secondary/30 border border-input border-r-0 rounded-s-lg">
                 <IsraelFlag />
             </div>
             <InputComponent
@@ -62,7 +62,7 @@ InputComponent.displayName = "InputComponent";
 const IsraelFlag = () => {
     const Flag = flags.IL;
     return (
-        <span className="flex h-3.5 w-5 sm:h-4 sm:w-6 overflow-hidden [&_svg]:size-full">
+        <span className="flex h-5 w-7 sm:h-3.5 sm:w-5 overflow-hidden [&_svg]:size-full">
             {Flag && <Flag title="ישראל" />}
         </span>
     );

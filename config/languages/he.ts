@@ -5,7 +5,10 @@ export const heIL = {
         titleEnglish: "Milgapo",
         slogan: "מחפשים מלגות בקלות",
         logoSubtitle: "הבית של המלגות",
-        loading: "טוען..."
+        loading: "טוען...",
+        appVersion: "1.0.0",
+        copyrightYear: new Date().getFullYear(),
+        greeting: "שלום"
     },
     auth: {
         login: {
@@ -23,7 +26,8 @@ export const heIL = {
             termsLink: "תנאי השימוש",
             privacyLink: "מדיניות הפרטיות",
             backToHome: "חזרה לדף הבית",
-            sendingCode: "שולח קוד..."
+            sendingCode: "שולח קוד...",
+            signingIn: "מתחבר..."
         },
         otp: {
             title: "אימות חשבון",
@@ -34,6 +38,13 @@ export const heIL = {
             navigatingBack: "חוזר לדף ההתחברות...",
             invalidCode: "קוד האימות פג תוקף או לא תקין. אנא נסה שוב.",
             codeRequired: "אנא הזן את כל 6 הספרות של קוד האימות"
+        },
+        callback: {
+            title: "מתחבר למערכת",
+            message: "אנא המתן בזמן שאנו מעבדים את ההתחברות שלך..."
+        },
+        logout: {
+            button: "התנתק"
         },
         errors: {
             invalidEmail: "כתובת אימייל לא תקינה",

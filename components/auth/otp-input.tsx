@@ -96,9 +96,9 @@ export function OTPInput({ length, value, onChange }: OTPInputProps) {
     };
 
     return (
-        <div className="flex justify-center gap-1 sm:gap-2 ltr" dir="ltr">
+        <div className="flex justify-center gap-2 sm:gap-1 ltr" dir="ltr">
             {otp.map((digit, index) => (
-                <div key={index} className="w-9 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 relative">
+                <div key={index} className="w-11 h-12 sm:w-9 sm:h-10 md:w-11 md:h-12 relative">
                     <Input
                         ref={(el) => setRef(el, index)}
                         type="text"
@@ -112,16 +112,16 @@ export function OTPInput({ length, value, onChange }: OTPInputProps) {
                         onFocus={() => handleFocus(index)}
                         onBlur={handleBlur}
                         className={`
-                            text-center text-base sm:text-lg md:text-xl font-medium 
-                            h-10 w-9 sm:h-11 sm:w-11 md:h-12 md:w-12 
+                            text-center text-xl sm:text-base md:text-xl font-medium 
+                            h-12 w-11 sm:h-10 sm:w-9 md:h-12 md:w-11
                             p-0 transition-all duration-300
-                            ${activeInput === index ? "ring-2 ring-primary ring-offset-1 sm:ring-offset-2" : ""}
+                            ${activeInput === index ? "ring-2 ring-primary ring-offset-2 sm:ring-offset-1" : ""}
                             ${digit ? "bg-primary/5 border-primary/30" : ""}
                         `}
                         autoFocus={index === 0 && !digit}
                     />
                     {index < length - 1 && (
-                        <div className="absolute top-1/2 -right-1 sm:-right-2 w-1 sm:w-2 h-[1px] sm:h-[2px] bg-gray-300" />
+                        <div className="absolute top-1/2 -right-2 sm:-right-1 w-2 sm:w-1 h-[2px] sm:h-[1px] bg-gray-300" />
                     )}
                 </div>
             ))}
