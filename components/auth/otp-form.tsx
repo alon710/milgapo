@@ -113,7 +113,7 @@ export default function OTPForm() {
                 <Button
                     type="button"
                     onClick={handleBack}
-                    disabled={isNavigating}
+                    disabled={isNavigating || isSubmitting}
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 sm:h-7 sm:w-7 rounded-full hover:bg-secondary/80"

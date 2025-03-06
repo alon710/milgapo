@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
 
 import { AuthButton } from "@/components/auth/auth-button";
@@ -22,14 +21,7 @@ type LoginFormProps = {
 
 const formSchema = z.object({
     contactMethod: z.enum(["email", "phone"]),
-    contact: z.string().refine((value) => {
-        if (!value) return false;
-
-        const trimmed = value.trim();
-        if (trimmed === "") return false;
-
-        return true;
-    }, t.auth.errors.requiredField)
+    contact: z.string().min(1, { message: t.auth.errors.requiredField })
 });
 
 export default function LoginForm({ error }: LoginFormProps) {
@@ -52,20 +44,22 @@ export default function LoginForm({ error }: LoginFormProps) {
     const contactMethod = form.watch("contactMethod");
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        // Prevent duplicate submissions
         if (requestInProgress) return;
 
         setFormError("");
 
         const { contactMethod, contact } = values;
 
-        if (contactMethod === "phone" && !isValidPhoneNumber(contact)) {
-            setFormError(t.auth.errors.invalidPhone);
-            return;
-        }
+        // Additional validation for email format
+        if (contactMethod === "email") {
+            const emailSchema = z.string().email({ message: t.auth.errors.invalidEmail });
+            const validationResult = emailSchema.safeParse(contact);
 
-        if (contactMethod === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
-            setFormError(t.auth.errors.invalidEmail);
-            return;
+            if (!validationResult.success) {
+                setFormError(validationResult.error.errors[0].message);
+                return;
+            }
         }
 
         setIsSubmitting(true);
@@ -192,6 +186,8 @@ export default function LoginForm({ error }: LoginFormProps) {
                                                         if (formError) setFormError("");
                                                         field.onChange(value);
                                                     }}
+                                                    error={formError}
+                                                    setError={setFormError}
                                                 />
                                             </div>
                                         )}
