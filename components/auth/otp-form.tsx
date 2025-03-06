@@ -1,15 +1,19 @@
 "use client";
 
+import { VerifyOtpParams } from "@supabase/supabase-js";
+import { ArrowLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AuthButton } from "@/components/auth/auth-button";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { OTPInput } from "@/components/auth/otp-input";
+import { Button } from "@/components/ui/button";
 import { t } from "@/config/languages";
 import { createClient } from "@/utils/supabase/client";
 
 export default function OTPForm() {
+    const supabase = createClient();
     const router = useRouter();
     const searchParams = useSearchParams();
     const contact = searchParams.get("contact") || "";
@@ -19,44 +23,58 @@ export default function OTPForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
 
+    // Validate contact on initial load
+    useEffect(() => {
+        if (!contact) {
+            setError(t.auth.errors.requiredField);
+            // Redirect back to login after a short delay if contact is missing
+            const timer = setTimeout(() => {
+                router.push("/login");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [contact, router]);
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
         if (otp.length !== 6) {
             setError(t.auth.otp.codeRequired);
             return;
         }
 
         setIsSubmitting(true);
-        const supabase = await createClient();
+        setError("");
 
         try {
-            let result;
+            // Verify the OTP
+            let verifyParams: VerifyOtpParams;
+
             if (method === "email") {
-                result = await supabase.auth.verifyOtp({
-                    email: contact,
+                verifyParams = {
+                    type: "email",
                     token: otp,
-                    type: "email"
-                });
+                    email: contact
+                };
             } else {
-                result = await supabase.auth.verifyOtp({
-                    phone: contact,
+                verifyParams = {
+                    type: "sms",
                     token: otp,
-                    type: "sms"
-                });
+                    phone: contact
+                };
             }
 
-            if (result.error) {
-                setIsSubmitting(false);
-                if (result.error.message === "Token has expired or is invalid") {
-                    setError(t.auth.otp.invalidCode);
-                } else {
-                    setError(result.error.message);
-                }
+            const { error: verifyError } = await supabase.auth.verifyOtp(verifyParams);
+
+            if (verifyError) {
+                setError(verifyError.message);
             } else {
-                router.push("/dashboard");
+                // Redirect to home page on successful verification
+                router.push("/");
             }
         } catch (error) {
             setError(error instanceof Error ? error.message : t.auth.errors.serverError);
+        } finally {
             setIsSubmitting(false);
         }
     }
@@ -67,21 +85,30 @@ export default function OTPForm() {
     }
 
     return (
-        <AuthLayout title={t.auth.otp.title} subtitle={`${t.auth.otp.subtitle} ${contact}`}>
-            <div className="mb-6">
-                <button
+        <AuthLayout
+            title={t.auth.otp.title}
+            subtitle={`${t.auth.otp.subtitle} ${contact}`}
+            topRightElement={
+                <Button
                     type="button"
                     onClick={handleBack}
                     disabled={isNavigating}
-                    className="text-sm text-primary hover:underline"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full hover:bg-secondary/80"
+                    aria-label="Back to login"
                 >
-                    {t.auth.otp.backButton}
-                </button>
-            </div>
-
+                    <ArrowLeft className="h-4 w-4" />
+                </Button>
+            }
+        >
             <form onSubmit={handleSubmit} className="space-y-6 w-full">
                 <div className="space-y-6" data-page="otp">
-                    {error && <div className="error-message">{error}</div>}
+                    {error && (
+                        <div className="error-message">
+                            <span>{error}</span>
+                        </div>
+                    )}
 
                     <div className="py-2">
                         <OTPInput length={6} value={otp} onChange={setOtp} />

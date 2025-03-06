@@ -11,9 +11,10 @@ type AuthLayoutProps = {
     title?: string;
     subtitle?: string;
     className?: string;
+    topRightElement?: ReactNode;
 };
 
-export function AuthLayout({ children, title, subtitle, className }: AuthLayoutProps) {
+export function AuthLayout({ children, title, subtitle, className, topRightElement }: AuthLayoutProps) {
     return (
         <div
             className={cn(
@@ -25,7 +26,8 @@ export function AuthLayout({ children, title, subtitle, className }: AuthLayoutP
                 <div className="flex justify-center mb-6">
                     <SiteLogo href="/" />
                 </div>
-                <div className="bg-card p-8 rounded-lg shadow-sm space-y-6">
+                <div className="bg-card p-8 rounded-lg shadow-sm space-y-6 relative">
+                    {topRightElement && <div className="absolute top-4 right-4">{topRightElement}</div>}
                     {title && <h1 className="text-2xl font-medium text-center">{title}</h1>}
                     {subtitle && <p className="text-muted-foreground text-center">{subtitle}</p>}
                     {children}

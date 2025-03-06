@@ -30,7 +30,6 @@ export const heIL = {
             subtitle: "קוד אימות נשלח אל",
             resendCode: "שלח קוד חדש",
             submitButton: "אמת קוד ועבור לאתר",
-            backButton: "חזור לדף ההתחברות",
             validatingCode: "מאמת...",
             navigatingBack: "חוזר לדף ההתחברות...",
             invalidCode: "קוד האימות פג תוקף או לא תקין. אנא נסה שוב.",

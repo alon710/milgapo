@@ -21,76 +21,86 @@ type LoginFormProps = {
     error: string | undefined;
 };
 
-// Define the form schema
-const formSchema = z
-    .object({
-        contactMethod: z.enum(["email", "phone"]),
-        contact: z.string().min(1, { message: t.auth.errors.requiredField })
-    })
-    .refine(
-        (data) => {
-            if (data.contactMethod === "email") {
-                // Validate email format
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contact);
-            } else {
-                // Only validate phone number if not empty
-                return data.contact === "" || isValidPhoneNumber(data.contact);
-            }
-        },
-        (data) => ({
-            message: data.contactMethod === "email" ? t.auth.errors.invalidEmail : t.auth.errors.invalidPhone,
-            path: ["contact"]
-        })
-    );
+// Form schema for validation
+const formSchema = z.object({
+    contactMethod: z.enum(["email", "phone"]),
+    contact: z.string().refine((value) => {
+        if (!value) return false;
+
+        const trimmed = value.trim();
+        if (trimmed === "") return false;
+
+        return true;
+    }, t.auth.errors.requiredField)
+});
 
 export default function LoginForm({ error }: LoginFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState(error || "");
+    const supabase = createClient();
 
-    // Initialize the form
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            contact: "",
-            contactMethod: "email"
-        },
-        mode: "onBlur" // Only validate on blur, not on change
+            contactMethod: "email",
+            contact: ""
+        }
     });
 
     const contactMethod = form.watch("contactMethod");
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const { contact, contactMethod } = values;
+        // Reset error state
         setFormError("");
-        setIsSubmitting(true);
 
-        // Final validation check for phone numbers
+        const { contactMethod, contact } = values;
+
+        // Additional validation for phone numbers
         if (contactMethod === "phone" && !isValidPhoneNumber(contact)) {
             setFormError(t.auth.errors.invalidPhone);
-            setIsSubmitting(false);
             return;
         }
 
-        const supabase = await createClient();
-        const options = { shouldCreateUser: true };
+        // Additional validation for email format
+        if (contactMethod === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+            setFormError(t.auth.errors.invalidEmail);
+            return;
+        }
+
+        setIsSubmitting(true);
 
         try {
-            console.log("contactMethod", contactMethod);
-            console.log("contact", contact);
-            const { error: authError } =
-                contactMethod === "email"
-                    ? await supabase.auth.signInWithOtp({ email: contact, options })
-                    : await supabase.auth.signInWithOtp({ phone: contact, options });
+            let result;
 
-            if (authError) {
-                setFormError(authError.message);
-                setIsSubmitting(false);
-                return;
+            if (contactMethod === "email") {
+                // Email validation and login logic
+                result = await supabase.auth.signInWithOtp({
+                    email: contact,
+                    options: {
+                        shouldCreateUser: false
+                    }
+                });
+            } else {
+                // Phone validation and login logic
+                result = await supabase.auth.signInWithOtp({
+                    phone: contact,
+                    options: {
+                        shouldCreateUser: false
+                    }
+                });
             }
 
-            window.location.href = `/otp?contact=${encodeURIComponent(contact)}&method=${contactMethod}`;
+            if (result.error) {
+                setFormError(result.error.message);
+            } else {
+                // Redirect to OTP verification page
+                const redirectTo = `/otp?contact=${encodeURIComponent(contact)}&method=${contactMethod}`;
+                window.location.href = redirectTo;
+            }
         } catch (error) {
-            setFormError(error instanceof Error ? error.message : t.auth.errors.serverError);
+            const errorMessage = error instanceof Error ? error.message : t.auth.errors.serverError;
+            setFormError(errorMessage);
+        } finally {
             setIsSubmitting(false);
         }
     }
@@ -100,7 +110,11 @@ export default function LoginForm({ error }: LoginFormProps) {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
                     <div className="space-y-6" data-page="login">
-                        {formError && <div className="error-message">{formError}</div>}
+                        {formError && (
+                            <div className="error-message">
+                                <span>{formError}</span>
+                            </div>
+                        )}
 
                         <div>
                             <ToggleGroup
@@ -110,21 +124,23 @@ export default function LoginForm({ error }: LoginFormProps) {
                                     if (value) {
                                         form.setValue("contactMethod", value as "email" | "phone");
                                         form.setValue("contact", "");
-                                        form.clearErrors("contact");
-                                        setFormError("");
+                                        // Clear previous error when changing method
+                                        if (formError) setFormError("");
                                     }
                                 }}
-                                className="flex mb-6 w-full rtl shadow-sm"
+                                className="justify-center"
                             >
                                 <ToggleGroupItem
                                     value="email"
-                                    className="flex-1 px-4 py-3 border rounded-e text-sm hover:bg-secondary/50 data-[state=on]:bg-primary/10 data-[state=on]:text-primary data-[state=on]:font-normal"
+                                    aria-label={t.auth.login.emailToggle}
+                                    className="flex-1 px-3 py-2 data-[state=on]:bg-primary/10"
                                 >
                                     {t.auth.login.emailToggle}
                                 </ToggleGroupItem>
                                 <ToggleGroupItem
                                     value="phone"
-                                    className="flex-1 px-4 py-3 border rounded-s text-sm hover:bg-secondary/50 data-[state=on]:bg-primary/10 data-[state=on]:text-primary data-[state=on]:font-normal"
+                                    aria-label={t.auth.login.phoneToggle}
+                                    className="flex-1 px-3 py-2 data-[state=on]:bg-primary/10"
                                 >
                                     {t.auth.login.phoneToggle}
                                 </ToggleGroupItem>
@@ -149,7 +165,6 @@ export default function LoginForm({ error }: LoginFormProps) {
                                             <div dir="ltr">
                                                 <PhoneInput
                                                     {...field}
-                                                    defaultCountry="IL"
                                                     placeholder={t.auth.login.phonePlaceholder}
                                                     className="shadow-sm"
                                                     onChange={(value) => {
