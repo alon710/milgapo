@@ -29,16 +29,19 @@ export function AuthLayout({
     return (
         <div
             className={cn(
-                "min-h-screen w-full flex flex-col items-center justify-center px-2 py-4 sm:px-4 sm:py-6 md:py-12 bg-gradient-to-b from-secondary to-background",
+                "min-h-screen w-full relative flex flex-col items-center justify-center px-2 py-4 sm:px-4 sm:py-6 md:py-12 bg-gradient-to-b from-secondary to-background",
                 className
             )}
         >
-            <div className="w-full sm:max-w-md md:max-w-lg space-y-4 sm:space-y-6">
-                <div className="flex justify-center mb-4 sm:mb-6">
-                    <div className="scale-125 sm:scale-100">
-                        <SiteLogo href="/" />
-                    </div>
+            {/* Logo fixed to top on mobile, centered above content on larger screens */}
+            <div className="fixed sm:static top-4 left-0 w-full flex justify-center mb-0 sm:mb-6 z-10">
+                <div className="scale-100">
+                    <SiteLogo href="/" />
                 </div>
+            </div>
+
+            {/* Main auth card with adjusted top margin for mobile */}
+            <div className="w-full sm:max-w-md md:max-w-lg space-y-4 sm:space-y-6 mt-16 sm:mt-0">
                 <div className="bg-card px-4 py-6 sm:p-5 md:p-8 rounded-lg shadow-sm space-y-5 sm:space-y-6 relative">
                     {topRightElement && (
                         <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
