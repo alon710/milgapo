@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { AuthButton } from "@/components/auth/auth-button";
 import { AuthLayout } from "@/components/auth/auth-layout";
+import { OTPFormSkeleton } from "@/components/auth/otp-form-skeleton";
 import { OTPInput } from "@/components/auth/otp-input";
 import { Button } from "@/components/ui/button";
 import { t } from "@/config/languages";
@@ -42,6 +43,7 @@ export default function OTPForm() {
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const formRef = useRef<HTMLFormElement>(null);
     // Track if we've had a failed attempt already
     const [hadFailedAttempt, setHadFailedAttempt] = useState(false);
@@ -55,18 +57,25 @@ export default function OTPForm() {
             const cookieContact = getCookie("auth_contact");
             const cookieMethod = getCookie("auth_method") as "email" | "phone";
 
-            setContact(cookieContact);
-            if (cookieMethod) {
+            if (cookieContact) {
+                setContact(decodeURIComponent(cookieContact));
+            } else {
+                // No contact cookie found, redirect to login
+                setError(t.auth.errors.requiredField);
+                router.push("/login");
+                return;
+            }
+
+            if (cookieMethod && (cookieMethod === "email" || cookieMethod === "phone")) {
                 setMethod(cookieMethod);
             }
 
-            if (!cookieContact) {
-                setError(t.auth.errors.requiredField);
-                const timer = setTimeout(() => {
-                    router.push("/login");
-                }, 3000);
-                return () => clearTimeout(timer);
-            }
+            // Simulate loading for a brief period (would be based on actual data loading in production)
+            const timer = setTimeout(() => {
+                setIsLoading(false);
+            }, 1000);
+
+            return () => clearTimeout(timer);
         }
     }, [router]);
 
@@ -176,6 +185,7 @@ export default function OTPForm() {
                 // Set flag to prevent auto-resubmission after a failed attempt
                 setHadFailedAttempt(true);
                 setError(verifyError.message);
+                setIsSubmitting(false); // Only reset loading state on error
 
                 // Optional: Clear the OTP input to force the user to re-enter the code
                 // setOtp("");
@@ -183,14 +193,16 @@ export default function OTPForm() {
                 // Clear the auth cookies after successful verification
                 document.cookie = "auth_contact=; max-age=0; path=/; Secure; SameSite=Strict";
                 document.cookie = "auth_method=; max-age=0; path=/; Secure; SameSite=Strict";
+
+                // Keep the loading state active during redirect
                 router.push("/");
+                return; // Skip the finally block
             }
         } catch (error) {
             // Also set flag for unexpected errors
             setHadFailedAttempt(true);
             setError(error instanceof Error ? error.message : t.auth.errors.serverError);
-        } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false); // Only reset loading state on error
         }
     }
 
@@ -216,44 +228,48 @@ export default function OTPForm() {
                     <ArrowRight className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                 </Button>
             }
+            isLoading={isLoading}
+            skeletonContent={<OTPFormSkeleton />}
         >
-            <form ref={formRef} onSubmit={handleSubmit} className="space-y-5 sm:space-y-4 w-full">
-                <div className="space-y-5 sm:space-y-4" data-page="otp">
-                    {error && (
-                        <div className="error-message text-base sm:text-sm">
-                            <span>{error}</span>
+            {!isLoading && (
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-5 sm:space-y-4 w-full">
+                    <div className="space-y-5 sm:space-y-4" data-page="otp">
+                        {error && (
+                            <div className="error-message text-base sm:text-sm">
+                                <span>{error}</span>
+                            </div>
+                        )}
+
+                        <div className="py-3 sm:py-1">
+                            <OTPInput
+                                length={6}
+                                value={otp}
+                                onChange={setOtp}
+                                onComplete={handleOtpComplete}
+                                onClick={() => {
+                                    // If there was a failed attempt and user clicks again, clear the OTP
+                                    if (hadFailedAttempt) {
+                                        setOtp("");
+                                        setHadFailedAttempt(false);
+                                    }
+                                }}
+                            />
                         </div>
-                    )}
 
-                    <div className="py-3 sm:py-1">
-                        <OTPInput
-                            length={6}
-                            value={otp}
-                            onChange={setOtp}
-                            onComplete={handleOtpComplete}
-                            onClick={() => {
-                                // If there was a failed attempt and user clicks again, clear the OTP
-                                if (hadFailedAttempt) {
-                                    setOtp("");
-                                    setHadFailedAttempt(false);
-                                }
-                            }}
-                        />
+                        <div className="flex flex-col gap-3 mt-4 sm:mt-2">
+                            <AuthButton
+                                type="submit"
+                                isLoading={isSubmitting}
+                                loadingText={t.auth.otp.validatingCode}
+                                disabled={otp.length !== 6 || isSubmitting}
+                                className="h-12 sm:h-10 text-base sm:text-sm"
+                            >
+                                {t.auth.otp.submitButton}
+                            </AuthButton>
+                        </div>
                     </div>
-
-                    <div className="flex flex-col gap-3 mt-4 sm:mt-2">
-                        <AuthButton
-                            type="submit"
-                            isLoading={isSubmitting}
-                            loadingText={t.auth.otp.validatingCode}
-                            disabled={otp.length !== 6 || isSubmitting}
-                            className="h-12 sm:h-10 text-base sm:text-sm"
-                        >
-                            {t.auth.otp.submitButton}
-                        </AuthButton>
-                    </div>
-                </div>
-            </form>
+                </form>
+            )}
         </AuthLayout>
     );
 }
