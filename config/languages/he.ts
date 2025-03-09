@@ -4,7 +4,7 @@ export const heIL = {
         title: "מילגאפו",
         titleEnglish: "Milgapo",
         slogan: "מחפשים מלגות בקלות",
-        logoSubtitle: "הבית של המלגות",
+        logoSubtitle: "הבית שלך למלגות",
         loading: "טוען...",
         appVersion: "1.0.0",
         copyrightYear: new Date().getFullYear(),
@@ -56,6 +56,23 @@ export const heIL = {
             invalidPhone: "מספר טלפון לא תקין",
             requiredField: "שדה חובה",
             serverError: "אירעה שגיאה בשרת, אנא נסה שוב מאוחר יותר"
+        }
+    },
+    dashboard: {
+        navigation: {
+            title: "ניווט ראשי",
+            dashboard: "לוח בקרה",
+            settings: "הגדרות"
+        },
+        header: {
+            title: "לוח בקרה",
+            betaTag: "חדש!",
+            notifications: "התראות",
+            profileMenu: "תפריט פרופיל"
+        },
+        userProfile: {
+            defaultRole: "מנהל",
+            settingsTooltip: "הגדרות החשבון"
         }
     }
 };
