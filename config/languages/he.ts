@@ -14,7 +14,7 @@ export const heIL = {
     auth: {
         login: {
             title: "התחברות",
-            subtitle: "הכנס את פרטי הקשר שלך כדי להתחבר",
+            subtitle: "בחרו את הדרך הנוחה לכם",
             emailToggle: "כתובת אימייל",
             phoneToggle: "מספר טלפון",
             submitButton: "התחבר",
@@ -24,7 +24,7 @@ export const heIL = {
             googleButton: "גוגל",
             facebookButton: "פייסבוק",
             termsAgreement: {
-                before: "בלחיצה על כפתור ״התחבר״ אני מסכים/ה ל",
+                before: "בהתחברות אני מסכים/ה ל",
                 middle: " ול",
                 after: ""
             },

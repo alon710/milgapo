@@ -29,7 +29,7 @@ export function AuthLayout({
     return (
         <div
             className={cn(
-                "min-h-screen w-full relative flex flex-col items-center justify-center px-2 py-4 sm:px-4 sm:py-6 md:py-12 bg-gradient-to-b from-secondary to-background",
+                "min-h-screen w-full relative flex flex-col items-center justify-center px-2 py-4 sm:px-4 sm:py-6 md:py-12",
                 className
             )}
         >
