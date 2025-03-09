@@ -6,7 +6,11 @@ import { usePathname } from "next/navigation";
 
 import { t } from "@/config/languages";
 
-export function SidebarNavigation() {
+interface SidebarNavigationProps {
+    onNavigate?: () => void;
+}
+
+export function SidebarNavigation({ onNavigate }: SidebarNavigationProps) {
     const pathname = usePathname();
 
     // Define navigation items with their paths and icons
@@ -14,6 +18,12 @@ export function SidebarNavigation() {
         { name: t.dashboard.navigation.dashboard, path: "/dashboard", icon: Home },
         { name: t.dashboard.navigation.settings, path: "/dashboard/settings", icon: Settings }
     ];
+
+    const handleClick = () => {
+        if (onNavigate) {
+            onNavigate();
+        }
+    };
 
     return (
         <nav className="space-y-1 px-2">
@@ -31,6 +41,7 @@ export function SidebarNavigation() {
                     <Link
                         key={item.path}
                         href={item.path}
+                        onClick={handleClick}
                         className={`
                             flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-all
                             ${
