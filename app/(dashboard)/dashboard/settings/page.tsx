@@ -2,9 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Provider, UserIdentity } from "@supabase/supabase-js";
-// Temporarily use a simpler Avatar component until UserAvatarUpload is properly registered
-import { User } from "lucide-react";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -46,9 +43,10 @@ const userSettingsSchema = z.object({
             message: t.auth.errors.invalidPhone
         })
         .optional()
-        .or(z.literal("")),
-    avatar_url: z.string().optional().nullable()
+        .or(z.literal(""))
 });
+
+type UserSettingsFormValues = z.infer<typeof userSettingsSchema>;
 
 // Schema for delete account confirmation
 const deleteAccountSchema = z.object({
@@ -57,46 +55,11 @@ const deleteAccountSchema = z.object({
     })
 });
 
-type UserSettingsFormValues = z.infer<typeof userSettingsSchema>;
 type DeleteAccountFormValues = z.infer<typeof deleteAccountSchema>;
-
-// Simple Avatar component as a temporary replacement
-function UserAvatarUpload({
-    currentUrl,
-    onUploadComplete
-}: {
-    currentUrl: string | null;
-    onUploadComplete: (url: string | null) => void;
-    // The user parameter is used by the consumer, but we don't use it internally
-    user?: unknown;
-}) {
-    return (
-        <div className="flex flex-col items-center space-y-4">
-            <div className="relative h-24 w-24 rounded-full border overflow-hidden bg-primary/10 flex items-center justify-center">
-                {currentUrl ? (
-                    <Image
-                        src={currentUrl}
-                        alt="Profile picture"
-                        width={96}
-                        height={96}
-                        className="h-full w-full object-cover"
-                        onError={() => onUploadComplete(null)}
-                    />
-                ) : (
-                    <User className="h-12 w-12 text-primary" />
-                )}
-            </div>
-            <div className="text-center text-sm text-muted-foreground">העלאת תמונות תהיה זמינה בקרוב</div>
-        </div>
-    );
-}
 
 export default function SettingsPage() {
     const user = useUser();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(
-        user.user_metadata?.avatar_url || user.user_metadata?.picture || user.user_metadata?.profile_image || null
-    );
     const [identities, setIdentities] = useState<UserIdentity[]>([]);
     const [isLoadingIdentities, setIsLoadingIdentities] = useState(true);
     const [isLinking, setIsLinking] = useState(false);
@@ -109,8 +72,7 @@ export default function SettingsPage() {
         resolver: zodResolver(userSettingsSchema),
         defaultValues: {
             email: user.email || "",
-            phone: user.phone || user.user_metadata?.phone || "",
-            avatar_url: avatarUrl
+            phone: user.phone || user.user_metadata?.phone || ""
         }
     });
 
@@ -208,8 +170,7 @@ export default function SettingsPage() {
                 // Convert empty string to undefined
                 phone: data.phone === "" ? undefined : data.phone,
                 user_metadata: {
-                    ...user.user_metadata,
-                    avatar_url: avatarUrl
+                    ...user.user_metadata
                 }
             });
 
@@ -266,12 +227,6 @@ export default function SettingsPage() {
                 <div className="p-6 flex-1 overflow-auto">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 h-full flex flex-col">
-                            {/* Avatar Upload - Now at the top of the form */}
-                            <div className="flex flex-col items-center pb-6 mb-6 border-b">
-                                <h2 className="text-xl font-semibold mb-4 self-start">תמונת פרופיל</h2>
-                                <UserAvatarUpload currentUrl={avatarUrl} onUploadComplete={setAvatarUrl} />
-                            </div>
-
                             {/* Profile information section */}
                             <div>
                                 <h2 className="text-xl font-semibold mb-4">פרטים אישיים</h2>
