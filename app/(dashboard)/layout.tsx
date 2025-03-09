@@ -3,12 +3,13 @@ import "../globals.css";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { BarChart3, ChevronRight, Home, Menu, Settings, User, Users } from "lucide-react";
+import { Menu, Settings, User } from "lucide-react";
 import { Geist } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { SidebarNavigation } from "@/components/dashboard/sidebar-navigation";
 import HeaderAuth from "@/components/header-auth";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { DirectionProviderRTL } from "@/components/providers";
@@ -41,13 +42,6 @@ interface UserWithMetadata {
 
 // Sidebar content component to reuse in both desktop and mobile views
 function SidebarContent({ user }: { user: UserWithMetadata }) {
-    // Define navigation items with their paths and icons
-    const navItems = [
-        { name: t.dashboard.navigation.dashboard, path: "/dashboard", icon: Home, active: true },
-        { name: t.dashboard.navigation.analytics, path: "/dashboard/analytics", icon: BarChart3, active: false },
-        { name: t.dashboard.navigation.users, path: "/dashboard/users", icon: Users, active: false }
-    ];
-
     // Get the user's avatar URL or use a default avatar if not available
     const avatarUrl =
         user.user_metadata?.avatar_url || user.user_metadata?.picture || user.user_metadata?.profile_image;
@@ -64,36 +58,7 @@ function SidebarContent({ user }: { user: UserWithMetadata }) {
                             {t.dashboard.navigation.title}
                         </h2>
                     </div>
-                    <nav className="space-y-1 px-2">
-                        {navItems.map((item) => {
-                            const Icon = item.icon;
-
-                            return (
-                                <Link
-                                    key={item.path}
-                                    href={item.path}
-                                    className={`
-                                        flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-all
-                                        ${
-                                            item.active
-                                                ? "bg-primary/10 text-primary font-medium shadow-sm"
-                                                : "text-foreground/80 hover:bg-accent hover:text-accent-foreground"
-                                        }
-                                    `}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <Icon
-                                            className={`h-5 w-5 ${
-                                                item.active ? "text-primary" : "text-muted-foreground"
-                                            }`}
-                                        />
-                                        <span className={item.active ? "font-medium" : ""}>{item.name}</span>
-                                    </div>
-                                    {item.active && <ChevronRight className="h-4 w-4 text-primary opacity-70" />}
-                                </Link>
-                            );
-                        })}
-                    </nav>
+                    <SidebarNavigation />
                 </div>
             </ScrollArea>
             <div className="p-4 border-t">

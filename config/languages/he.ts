@@ -62,8 +62,6 @@ export const heIL = {
         navigation: {
             title: "ניווט ראשי",
             dashboard: "לוח בקרה",
-            analytics: "ניתוח נתונים",
-            users: "משתמשים",
             settings: "הגדרות"
         },
         header: {
