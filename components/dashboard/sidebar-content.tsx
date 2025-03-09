@@ -1,11 +1,11 @@
 "use client";
 
-import { User } from "lucide-react";
-import { Settings } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
+import { useTransition } from "react";
 
+import { signOutAction } from "@/app/actions";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -33,9 +33,10 @@ interface SidebarContentProps {
     isMobile?: boolean;
 }
 
-export function SidebarContent({ user, onNavigate, isMobile = false }: SidebarContentProps) {
+export function SidebarContent({ user, onNavigate }: SidebarContentProps) {
     // State to track if image failed to load
     const [imageError, setImageError] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     // Get the user's avatar URL or use a default avatar if not available
     const avatarUrl =
@@ -43,6 +44,15 @@ export function SidebarContent({ user, onNavigate, isMobile = false }: SidebarCo
 
     const handleImageError = () => {
         setImageError(true);
+    };
+
+    const handleLogout = () => {
+        if (onNavigate) {
+            onNavigate();
+        }
+        startTransition(() => {
+            signOutAction();
+        });
     };
 
     return (
@@ -86,15 +96,16 @@ export function SidebarContent({ user, onNavigate, isMobile = false }: SidebarCo
                             </p>
                         </div>
                     </div>
-                    <Link
-                        href="/dashboard/settings"
-                        title={t.dashboard.userProfile.settingsTooltip}
-                        onClick={isMobile ? onNavigate : undefined}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full h-8 w-8 bg-muted/50 hover:bg-muted"
+                        title="התנתק"
+                        onClick={handleLogout}
+                        disabled={isPending}
                     >
-                        <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 bg-muted/50 hover:bg-muted">
-                            <Settings className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
-                        </Button>
-                    </Link>
+                        <LogOut className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                    </Button>
                 </div>
             </div>
         </>

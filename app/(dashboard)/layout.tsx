@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist } from "next/font/google";
 import { redirect } from "next/navigation";
 
+import { DashboardFooter } from "@/components/dashboard/dashboard-footer";
 import { MobileSidebar } from "@/components/dashboard/mobile-sidebar";
 import { PageTitle } from "@/components/dashboard/page-title";
 import { SidebarContent } from "@/components/dashboard/sidebar-content";
@@ -67,6 +68,9 @@ export default async function DashboardLayout({
                                     <UserProvider user={user}>{children}</UserProvider>
                                 </div>
                             </main>
+
+                            {/* Footer */}
+                            <DashboardFooter />
                         </div>
                     </div>
                     <SpeedInsights />

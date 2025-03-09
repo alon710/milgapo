@@ -1,7 +1,6 @@
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 
-import { signOutAction } from "@/app/actions";
 import { t } from "@/config/languages";
 import { createClient } from "@/utils/supabase/server";
 
@@ -26,13 +25,10 @@ export default async function AuthButton() {
     } = await supabase.auth.getUser();
 
     return user ? (
-        <div className="flex items-center gap-4">
-            {t.common.greeting} {getUserGreetingName(user)}
-            <form action={signOutAction}>
-                <Button type="submit" variant="outline" size="sm">
-                    {t.auth.logout.button}
-                </Button>
-            </form>
+        <div className="flex items-center">
+            <span className="text-sm">
+                {t.common.greeting} {getUserGreetingName(user)}
+            </span>
         </div>
     ) : (
         <div className="flex gap-2">
