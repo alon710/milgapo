@@ -9,8 +9,6 @@ const nextConfig: NextConfig = {
             "s.gravatar.com", // Gravatar
             "graph.facebook.com", // Facebook graph API
             "pbs.twimg.com", // Twitter
-            "supabase.co", // Supabase storage buckets
-            "supabase.com", // Supabase storage buckets
             "fjojdwojbxpjyhhgqdad.supabase.co" // Project-specific Supabase URL
         ]
     }
