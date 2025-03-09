@@ -4,7 +4,7 @@ export const heIL = {
         title: "מילגאפו",
         titleEnglish: "Milgapo",
         slogan: "מחפשים מלגות בקלות",
-        logoSubtitle: "הבית של המלגות",
+        logoSubtitle: "טל המלך",
         loading: "טוען...",
         appVersion: "1.0.0",
         copyrightYear: new Date().getFullYear(),
