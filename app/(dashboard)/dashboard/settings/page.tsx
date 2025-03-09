@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Provider, UserIdentity } from "@supabase/supabase-js";
 import { Mail, Phone } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -48,25 +49,16 @@ const phoneLinkSchema = z.object({
         })
 });
 
-// Schema for delete account confirmation
-const deleteAccountSchema = z.object({
-    confirmationText: z.string().refine((val) => val === "DELETE", {
-        message: 'יש להקליד "DELETE" כדי לאשר את המחיקה'
-    })
-});
-
 type EmailLinkFormValues = z.infer<typeof emailLinkSchema>;
 type PhoneLinkFormValues = z.infer<typeof phoneLinkSchema>;
-type DeleteAccountFormValues = z.infer<typeof deleteAccountSchema>;
 
 export default function SettingsPage() {
+    const router = useRouter();
     const user = useUser();
     const [identities, setIdentities] = useState<UserIdentity[]>([]);
     const [isLoadingIdentities, setIsLoadingIdentities] = useState(true);
     const [isLinking, setIsLinking] = useState(false);
     const [isUnlinking, setIsUnlinking] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showEmailLinkDialog, setShowEmailLinkDialog] = useState(false);
     const [showPhoneLinkDialog, setShowPhoneLinkDialog] = useState(false);
     const [isEmailLinked, setIsEmailLinked] = useState(false);
@@ -89,42 +81,56 @@ export default function SettingsPage() {
         }
     });
 
-    // Initialize delete confirmation form without default value
-    const deleteForm = useForm<DeleteAccountFormValues>({
-        resolver: zodResolver(deleteAccountSchema)
-    });
-
     // Check authentication methods
     useEffect(() => {
         setIsEmailLinked(!!user.email);
         setIsPhoneLinked(!!user.phone);
     }, [user]);
 
+    // Refresh user session and page data
+    const refreshUserData = async () => {
+        try {
+            const supabase = createClient();
+
+            // Refresh session
+            const { error } = await supabase.auth.refreshSession();
+            if (error) throw error;
+
+            // Refresh page to update user data
+            router.refresh();
+
+            // Fetch identities again
+            fetchIdentities();
+        } catch (error) {
+            console.error("Error refreshing user data:", error);
+        }
+    };
+
     // Fetch user identities on component mount
     useEffect(() => {
-        async function fetchIdentities() {
-            setIsLoadingIdentities(true);
-            try {
-                const supabase = createClient();
-                const { data, error } = await supabase.auth.getUserIdentities();
-
-                if (error) {
-                    throw error;
-                }
-
-                if (data && data.identities) {
-                    setIdentities(data.identities);
-                }
-            } catch (error) {
-                console.error("Error fetching identities:", error);
-                toast.error("Failed to load linked accounts");
-            } finally {
-                setIsLoadingIdentities(false);
-            }
-        }
-
         fetchIdentities();
     }, []);
+
+    async function fetchIdentities() {
+        setIsLoadingIdentities(true);
+        try {
+            const supabase = createClient();
+            const { data, error } = await supabase.auth.getUserIdentities();
+
+            if (error) {
+                throw error;
+            }
+
+            if (data && data.identities) {
+                setIdentities(data.identities);
+            }
+        } catch (error) {
+            console.error("Error fetching identities:", error);
+            toast.error("Failed to load linked accounts");
+        } finally {
+            setIsLoadingIdentities(false);
+        }
+    }
 
     // Link a new identity
     const handleLinkIdentity = async (provider: Provider) => {
@@ -140,10 +146,7 @@ export default function SettingsPage() {
             toast.success(`Successfully linked ${providerNames[provider] || provider} account`);
 
             // Refresh identities
-            const { data: identitiesData } = await supabase.auth.getUserIdentities();
-            if (identitiesData && identitiesData.identities) {
-                setIdentities(identitiesData.identities);
-            }
+            await refreshUserData();
         } catch (error) {
             console.error("Error linking identity:", error);
             toast.error(`Failed to link ${providerNames[provider] || provider} account`);
@@ -171,6 +174,9 @@ export default function SettingsPage() {
             // Update identities list
             setIdentities(identities.filter((i) => i.identity_id !== identity.identity_id));
             toast.success(`Successfully unlinked ${providerNames[identity.provider] || identity.provider} account`);
+
+            // Refresh user data
+            await refreshUserData();
         } catch (error) {
             console.error("Error unlinking identity:", error);
             toast.error(`Failed to unlink ${providerNames[identity.provider] || identity.provider} account`);
@@ -196,6 +202,9 @@ export default function SettingsPage() {
 
             // Reset form
             emailLinkForm.reset();
+
+            // Refresh user data after a delay to allow verification to complete
+            setTimeout(refreshUserData, 5000);
         } catch (error) {
             console.error("Error linking email:", error);
             toast.error("Failed to add email. Please try again.");
@@ -221,36 +230,14 @@ export default function SettingsPage() {
 
             // Reset form
             phoneLinkForm.reset();
+
+            // Refresh user data after a delay to allow verification to complete
+            setTimeout(refreshUserData, 5000);
         } catch (error) {
             console.error("Error linking phone:", error);
             toast.error("Failed to add phone number. Please try again.");
         } finally {
             setIsSendingVerification(false);
-        }
-    };
-
-    // Handle account deletion
-    const handleDeleteAccount = async () => {
-        setIsDeleting(true);
-        try {
-            const supabase = createClient();
-            const { error } = await supabase.auth.admin.deleteUser(user.id);
-
-            if (error) {
-                throw error;
-            }
-
-            // Sign out and redirect after deletion
-            await supabase.auth.signOut();
-            window.location.href = "/";
-
-            toast.success("Account successfully deleted");
-        } catch (error) {
-            console.error("Error deleting account:", error);
-            toast.error("Failed to delete account. Please try again later.");
-            setShowDeleteDialog(false);
-        } finally {
-            setIsDeleting(false);
         }
     };
 
@@ -519,49 +506,6 @@ export default function SettingsPage() {
                                     </DialogClose>
                                     <Button type="submit" disabled={isSendingVerification}>
                                         {isSendingVerification ? "שולח..." : "שלח קוד אימות"}
-                                    </Button>
-                                </DialogFooter>
-                            </form>
-                        </Form>
-                    </div>
-                </DialogContent>
-            </Dialog>
-
-            {/* Delete Account Confirmation Dialog */}
-            <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>אישור מחיקת חשבון</DialogTitle>
-                        <DialogDescription>
-                            פעולה זו תמחק לצמיתות את כל הנתונים האישיים שלך ולא ניתן יהיה לשחזרם.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="py-4">
-                        <Form {...deleteForm}>
-                            <form onSubmit={deleteForm.handleSubmit(handleDeleteAccount)} className="space-y-4">
-                                <FormField
-                                    control={deleteForm.control}
-                                    name="confirmationText"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>הקלד &quot;DELETE&quot; כדי לאשר</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="DELETE" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <DialogFooter className="sm:justify-between">
-                                    <DialogClose asChild>
-                                        <Button type="button" variant="outline">
-                                            ביטול
-                                        </Button>
-                                    </DialogClose>
-                                    <Button type="submit" variant="destructive" disabled={isDeleting}>
-                                        {isDeleting ? "מוחק..." : "אישור מחיקת חשבון"}
                                     </Button>
                                 </DialogFooter>
                             </form>
