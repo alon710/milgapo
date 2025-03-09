@@ -57,5 +57,24 @@ export const heIL = {
             requiredField: "שדה חובה",
             serverError: "אירעה שגיאה בשרת, אנא נסה שוב מאוחר יותר"
         }
+    },
+    dashboard: {
+        navigation: {
+            title: "ניווט ראשי",
+            dashboard: "לוח בקרה",
+            analytics: "ניתוח נתונים",
+            users: "משתמשים",
+            settings: "הגדרות"
+        },
+        header: {
+            title: "לוח בקרה",
+            betaTag: "חדש!",
+            notifications: "התראות",
+            profileMenu: "תפריט פרופיל"
+        },
+        userProfile: {
+            defaultRole: "מנהל",
+            settingsTooltip: "הגדרות החשבון"
+        }
     }
 };
