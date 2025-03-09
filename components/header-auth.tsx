@@ -29,7 +29,7 @@ export default async function AuthButton() {
         <div className="flex items-center gap-4">
             {t.common.greeting} {getUserGreetingName(user)}
             <form action={signOutAction}>
-                <Button type="submit" variant={"default"} size="sm">
+                <Button type="submit" variant="outline" size="sm">
                     {t.auth.logout.button}
                 </Button>
             </form>

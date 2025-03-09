@@ -7,10 +7,10 @@ import { Geist } from "next/font/google";
 import { redirect } from "next/navigation";
 
 import { MobileSidebar } from "@/components/dashboard/mobile-sidebar";
+import { PageTitle } from "@/components/dashboard/page-title";
 import { SidebarContent } from "@/components/dashboard/sidebar-content";
 import HeaderAuth from "@/components/header-auth";
 import { DirectionProviderRTL } from "@/components/providers";
-import { t } from "@/config/languages";
 import { UserProvider } from "@/context/user-context";
 import { createClient } from "@/utils/supabase/server";
 
@@ -52,7 +52,7 @@ export default async function DashboardLayout({
                                     {/* Mobile sidebar */}
                                     <MobileSidebar user={user} />
 
-                                    <h1 className="text-lg font-semibold">{t.dashboard.header.title}</h1>
+                                    <PageTitle />
                                 </div>
 
                                 {/* Actions */}

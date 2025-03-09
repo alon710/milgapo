@@ -4,6 +4,7 @@ import { User } from "lucide-react";
 import { Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import { SiteLogo } from "@/components/layout/site-logo";
 import { Button } from "@/components/ui/button";
@@ -33,9 +34,16 @@ interface SidebarContentProps {
 }
 
 export function SidebarContent({ user, onNavigate, isMobile = false }: SidebarContentProps) {
+    // State to track if image failed to load
+    const [imageError, setImageError] = useState(false);
+
     // Get the user's avatar URL or use a default avatar if not available
     const avatarUrl =
         user.user_metadata?.avatar_url || user.user_metadata?.picture || user.user_metadata?.profile_image;
+
+    const handleImageError = () => {
+        setImageError(true);
+    };
 
     return (
         <>
@@ -56,13 +64,14 @@ export function SidebarContent({ user, onNavigate, isMobile = false }: SidebarCo
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                            {avatarUrl ? (
+                            {avatarUrl && !imageError ? (
                                 <Image
                                     src={avatarUrl}
                                     alt="Profile picture"
                                     width={36}
                                     height={36}
                                     className="h-full w-full object-cover"
+                                    onError={handleImageError}
                                 />
                             ) : (
                                 <User className="h-5 w-5 text-primary" />
