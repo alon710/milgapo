@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
             "platform-lookaside.fbsbx.com", // Facebook avatars
             "s.gravatar.com", // Gravatar
             "graph.facebook.com", // Facebook graph API
-            "pbs.twimg.com" // Twitter
+            "pbs.twimg.com", // Twitter
+            "fjojdwojbxpjyhhgqdad.supabase.co" // Project-specific Supabase URL
         ]
     }
 };

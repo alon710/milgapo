@@ -1,7 +1,518 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Provider, UserIdentity } from "@supabase/supabase-js";
+import { Mail, Phone } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { t } from "@/config/languages";
+import { useUser } from "@/context/user-context";
+import { createClient } from "@/utils/supabase/client";
+
+// Provider display names
+const providerNames: Record<string, string> = {
+    google: "Google",
+    facebook: "Facebook",
+    email: "Email/Password",
+    phone: "Phone"
+};
+
+// Schema for email linking form
+const emailLinkSchema = z.object({
+    email: z.string().email({ message: "נא להזין כתובת דוא״ל תקינה" })
+});
+
+// Schema for phone linking form
+const phoneLinkSchema = z.object({
+    phone: z
+        .string()
+        .min(10, { message: t.auth.errors.invalidPhone })
+        .max(10, { message: t.auth.errors.invalidPhone })
+        .refine((val) => /^05\d{8}$/.test(val), {
+            message: t.auth.errors.invalidPhone
+        })
+});
+
+type EmailLinkFormValues = z.infer<typeof emailLinkSchema>;
+type PhoneLinkFormValues = z.infer<typeof phoneLinkSchema>;
+
 export default function SettingsPage() {
+    const router = useRouter();
+    const user = useUser();
+    const [identities, setIdentities] = useState<UserIdentity[]>([]);
+    const [isLoadingIdentities, setIsLoadingIdentities] = useState(true);
+    const [isLinking, setIsLinking] = useState(false);
+    const [isUnlinking, setIsUnlinking] = useState(false);
+    const [showEmailLinkDialog, setShowEmailLinkDialog] = useState(false);
+    const [showPhoneLinkDialog, setShowPhoneLinkDialog] = useState(false);
+    const [isEmailLinked, setIsEmailLinked] = useState(false);
+    const [isPhoneLinked, setIsPhoneLinked] = useState(false);
+    const [isSendingVerification, setIsSendingVerification] = useState(false);
+
+    // Initialize email link form
+    const emailLinkForm = useForm<EmailLinkFormValues>({
+        resolver: zodResolver(emailLinkSchema),
+        defaultValues: {
+            email: ""
+        }
+    });
+
+    // Initialize phone link form
+    const phoneLinkForm = useForm<PhoneLinkFormValues>({
+        resolver: zodResolver(phoneLinkSchema),
+        defaultValues: {
+            phone: ""
+        }
+    });
+
+    // Check authentication methods
+    useEffect(() => {
+        setIsEmailLinked(!!user.email);
+        setIsPhoneLinked(!!user.phone);
+    }, [user]);
+
+    // Refresh user session and page data
+    const refreshUserData = async () => {
+        try {
+            const supabase = createClient();
+
+            // Refresh session
+            const { error } = await supabase.auth.refreshSession();
+            if (error) throw error;
+
+            // Refresh page to update user data
+            router.refresh();
+
+            // Fetch identities again
+            fetchIdentities();
+        } catch (error) {
+            console.error("Error refreshing user data:", error);
+        }
+    };
+
+    // Fetch user identities on component mount
+    useEffect(() => {
+        fetchIdentities();
+    }, []);
+
+    async function fetchIdentities() {
+        setIsLoadingIdentities(true);
+        try {
+            const supabase = createClient();
+            const { data, error } = await supabase.auth.getUserIdentities();
+
+            if (error) {
+                throw error;
+            }
+
+            if (data && data.identities) {
+                setIdentities(data.identities);
+            }
+        } catch (error) {
+            console.error("Error fetching identities:", error);
+            toast.error("Failed to load linked accounts");
+        } finally {
+            setIsLoadingIdentities(false);
+        }
+    }
+
+    // Link a new identity
+    const handleLinkIdentity = async (provider: Provider) => {
+        setIsLinking(true);
+        try {
+            const supabase = createClient();
+            const { error } = await supabase.auth.linkIdentity({ provider });
+
+            if (error) {
+                throw error;
+            }
+
+            toast.success(`Successfully linked ${providerNames[provider] || provider} account`);
+
+            // Refresh identities
+            await refreshUserData();
+        } catch (error) {
+            console.error("Error linking identity:", error);
+            toast.error(`Failed to link ${providerNames[provider] || provider} account`);
+        } finally {
+            setIsLinking(false);
+        }
+    };
+
+    // Unlink an existing identity
+    const handleUnlinkIdentity = async (identity: UserIdentity) => {
+        if (identities.length <= 1) {
+            toast.error("Cannot unlink the only identity. Add another login method first.");
+            return;
+        }
+
+        setIsUnlinking(true);
+        try {
+            const supabase = createClient();
+            const { error } = await supabase.auth.unlinkIdentity(identity);
+
+            if (error) {
+                throw error;
+            }
+
+            // Update identities list
+            setIdentities(identities.filter((i) => i.identity_id !== identity.identity_id));
+            toast.success(`Successfully unlinked ${providerNames[identity.provider] || identity.provider} account`);
+
+            // Refresh user data
+            await refreshUserData();
+        } catch (error) {
+            console.error("Error unlinking identity:", error);
+            toast.error(`Failed to unlink ${providerNames[identity.provider] || identity.provider} account`);
+        } finally {
+            setIsUnlinking(false);
+        }
+    };
+
+    // Handle linking email
+    const handleLinkEmail = async (data: EmailLinkFormValues) => {
+        setIsSendingVerification(true);
+        try {
+            const supabase = createClient();
+            const { error } = await supabase.auth.updateUser({
+                email: data.email
+            });
+
+            if (error) throw error;
+
+            // Close the dialog and show success message
+            setShowEmailLinkDialog(false);
+            toast.success(`Verification email sent to ${data.email}. Please check your inbox.`);
+
+            // Reset form
+            emailLinkForm.reset();
+
+            // Refresh user data after a delay to allow verification to complete
+            setTimeout(refreshUserData, 5000);
+        } catch (error) {
+            console.error("Error linking email:", error);
+            toast.error("Failed to add email. Please try again.");
+        } finally {
+            setIsSendingVerification(false);
+        }
+    };
+
+    // Handle linking phone
+    const handleLinkPhone = async (data: PhoneLinkFormValues) => {
+        setIsSendingVerification(true);
+        try {
+            const supabase = createClient();
+            const { error } = await supabase.auth.updateUser({
+                phone: data.phone
+            });
+
+            if (error) throw error;
+
+            // Close the dialog and show success message
+            setShowPhoneLinkDialog(false);
+            toast.success(`Verification SMS sent to ${data.phone}. Please check your phone.`);
+
+            // Reset form
+            phoneLinkForm.reset();
+
+            // Refresh user data after a delay to allow verification to complete
+            setTimeout(refreshUserData, 5000);
+        } catch (error) {
+            console.error("Error linking phone:", error);
+            toast.error("Failed to add phone number. Please try again.");
+        } finally {
+            setIsSendingVerification(false);
+        }
+    };
+
+    // Check if Google is linked
+    const isGoogleLinked = identities.some((identity) => identity.provider === "google");
+
+    // Check if Facebook is linked
+    const isFacebookLinked = identities.some((identity) => identity.provider === "facebook");
+
     return (
-        <div>
-            <h1>Settings</h1>
+        // Use flex layout with h-full instead of absolute positioning
+        <div className="flex flex-col h-full w-full">
+            <div className="bg-card border rounded-lg flex-1 flex flex-col overflow-auto">
+                {/* Title and subtitle inside the card */}
+                <div className="p-6 border-b">
+                    <h1 className="text-2xl font-bold mb-2">הגדרות משתמש</h1>
+                    <p className="text-muted-foreground">עדכן את פרטי המשתמש שלך ואת הגדרות החשבון.</p>
+                </div>
+
+                <div className="p-6 flex-1 overflow-auto">
+                    <div className="space-y-6 h-full flex flex-col">
+                        {/* Login Methods Section */}
+                        <div>
+                            <h2 className="text-xl font-bold mb-4">שיטות התחברות</h2>
+                            <p className="text-muted-foreground mb-4">נהל את דרכי ההתחברות שלך למערכת</p>
+
+                            <div className="space-y-6">
+                                {/* Email authentication */}
+                                <div className="flex items-center justify-between p-4 border rounded-md">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                                            <Mail className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">דוא״ל</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {isEmailLinked
+                                                    ? `מחובר לחשבון דוא״ל: ${user.email}`
+                                                    : "הוסף דוא״ל לחשבון שלך כדי להתחבר באמצעותו"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {isEmailLinked ? (
+                                        <Button type="button" variant="outline" size="sm" disabled={true}>
+                                            הדוא״ל מאומת
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setShowEmailLinkDialog(true)}
+                                            disabled={isSendingVerification}
+                                        >
+                                            הוסף דוא״ל
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {/* Phone authentication */}
+                                <div className="flex items-center justify-between p-4 border rounded-md">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                                            <Phone className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">טלפון</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {isPhoneLinked
+                                                    ? `מחובר למספר טלפון: ${user.phone}`
+                                                    : "הוסף מספר טלפון לחשבון שלך כדי להתחבר באמצעותו"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {isPhoneLinked ? (
+                                        <Button type="button" variant="outline" size="sm" disabled={true}>
+                                            הטלפון מאומת
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setShowPhoneLinkDialog(true)}
+                                            disabled={isSendingVerification}
+                                        >
+                                            הוסף טלפון
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Linked Accounts Section */}
+                        <div className="border-t pt-6 mt-6">
+                            <h2 className="text-xl font-bold mb-4">חשבונות מקושרים</h2>
+                            <p className="text-muted-foreground mb-4">
+                                קשר את החשבון שלך לשירותי התחברות חברתיים כדי להתחבר בקלות.
+                            </p>
+
+                            {isLoadingIdentities ? (
+                                <div className="py-4">טוען חשבונות מקושרים...</div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {/* Google button */}
+                                    <div className="flex items-center justify-between p-4 border rounded-md">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                                                G
+                                            </div>
+                                            <div>
+                                                <p className="font-medium">Google</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {isGoogleLinked ? "מחובר לחשבון Google" : "קשר את חשבון Google שלך"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {isGoogleLinked ? (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => {
+                                                    const googleIdentity = identities.find(
+                                                        (i) => i.provider === "google"
+                                                    );
+                                                    if (googleIdentity) handleUnlinkIdentity(googleIdentity);
+                                                }}
+                                                disabled={isUnlinking || identities.length <= 1}
+                                            >
+                                                הסר קישור
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleLinkIdentity("google")}
+                                                disabled={isLinking}
+                                            >
+                                                קשר חשבון
+                                            </Button>
+                                        )}
+                                    </div>
+
+                                    {/* Facebook button */}
+                                    <div className="flex items-center justify-between p-4 border rounded-md">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                                                FB
+                                            </div>
+                                            <div>
+                                                <p className="font-medium">Facebook</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {isFacebookLinked
+                                                        ? "מחובר לחשבון Facebook"
+                                                        : "קשר את חשבון Facebook שלך"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {isFacebookLinked ? (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => {
+                                                    const facebookIdentity = identities.find(
+                                                        (i) => i.provider === "facebook"
+                                                    );
+                                                    if (facebookIdentity) handleUnlinkIdentity(facebookIdentity);
+                                                }}
+                                                disabled={isUnlinking || identities.length <= 1}
+                                            >
+                                                הסר קישור
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleLinkIdentity("facebook")}
+                                                disabled={isLinking}
+                                            >
+                                                קשר חשבון
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Email Link Dialog */}
+            <Dialog open={showEmailLinkDialog} onOpenChange={setShowEmailLinkDialog}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>הוספת כתובת דוא״ל</DialogTitle>
+                        <DialogDescription>הוסף כתובת דוא״ל לחשבון שלך. תקבל הודעת אימות לכתובת זו.</DialogDescription>
+                    </DialogHeader>
+
+                    <div className="py-4">
+                        <Form {...emailLinkForm}>
+                            <form onSubmit={emailLinkForm.handleSubmit(handleLinkEmail)} className="space-y-4">
+                                <FormField
+                                    control={emailLinkForm.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>כתובת דוא״ל</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="your.email@example.com" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <DialogFooter className="sm:justify-between">
+                                    <DialogClose asChild>
+                                        <Button type="button" variant="outline">
+                                            ביטול
+                                        </Button>
+                                    </DialogClose>
+                                    <Button type="submit" disabled={isSendingVerification}>
+                                        {isSendingVerification ? "שולח..." : "שלח קוד אימות"}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Phone Link Dialog */}
+            <Dialog open={showPhoneLinkDialog} onOpenChange={setShowPhoneLinkDialog}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>הוספת מספר טלפון</DialogTitle>
+                        <DialogDescription>הוסף מספר טלפון לחשבון שלך. תקבל הודעת SMS עם קוד אימות.</DialogDescription>
+                    </DialogHeader>
+
+                    <div className="py-4">
+                        <Form {...phoneLinkForm}>
+                            <form onSubmit={phoneLinkForm.handleSubmit(handleLinkPhone)} className="space-y-4">
+                                <FormField
+                                    control={phoneLinkForm.control}
+                                    name="phone"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>מספר טלפון</FormLabel>
+                                            <FormControl>
+                                                <Input type="tel" placeholder="05XXXXXXXX" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <DialogFooter className="sm:justify-between">
+                                    <DialogClose asChild>
+                                        <Button type="button" variant="outline">
+                                            ביטול
+                                        </Button>
+                                    </DialogClose>
+                                    <Button type="submit" disabled={isSendingVerification}>
+                                        {isSendingVerification ? "שולח..." : "שלח קוד אימות"}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
